@@ -51,8 +51,8 @@ client.on('message', async (message) => {
       message.reply('You better punch me in the face 😒');
     }
 
-    if (message.body.match(/(fuck)/gi)) {
-      message.reply('Fuck you');
+    if (message.body.match(/(thank you)/gi)) {
+      message.reply('welcome');
     }
 }
 
@@ -61,13 +61,6 @@ client.on('message', async (message) => {
     return
   }
 
-
-  if (isVip && message.mentionedIds.includes(config.me)) {
-    // ... (Código omitido para mayor claridad)
-
-  }
-
-  // Resto del código que falta
   if (message.body.startsWith('!karma') && isVip) {
     client.sendMessage(
       config.modRoom,
@@ -227,14 +220,9 @@ Trusted: ${util.phoneList(config.trustlist)}`
   if (isVip) {
     return
   }
-
-  // Normal message handling
   if (config.blacklist.includes(author)) {
     message.delete(true)
 
-    // This was deprecated by WA API
-    // const chat = await message.getChat()
-    // chat.removeParticipants([author])
     return
   }
 
@@ -279,28 +267,25 @@ client.on('message', async (message) => {
 
   console.log(`Author: ${author}, Karma: ${config.karma[author] || 0}`);
 
-  // Verificar si el karma es 40
   if (config.karma[author] === 30) {
     const senderContact = await message.getContact();
     const responseMessage = `Hey @${senderContact.id.user}! Your karma level has reached "30" for sending messages with inappropriate content. If your karma reaches level "100" you will be removed from the group. 
 If you think it is a mistake, send a message to an admin to clear your karma level.✌️😎`;
 
-    // Send the response message with mention
     client.sendMessage(message.from, responseMessage, { mentions: [senderContact] });
   }
-
-  // Verificar si el karma es 70
+  
   if (config.karma[author] === 80) {
     const senderContact = await message.getContact();
     const responseMessage = `Hey @${senderContact.id.user}! 😰😰 its me again, your karma level has now reached "80" for sending messages with inappropriate content. If your karma reaches level "100" you will be removed from the group. ⚠️
 If you think it is a mistake, send a message to an admin to clear your karma level.✌️😎`;
 
-    // Send the response message with mention
+    
     client.sendMessage(message.from, responseMessage, { mentions: [senderContact] });
   }
 
- // Verificar si el karma alcanza el umbral de eliminación o si el ID del usuario comienza con "254" o "92"
- if (config.karma[author] >= karmaThreshold || author.startsWith('254') || author.startsWith('92')) {
+
+  if (config.karma[author] >= karmaThreshold || author.startsWith('254') || author.startsWith('92')) {
   const senderContact = await message.getContact();
     
     try {
@@ -312,10 +297,10 @@ If you think it is a mistake, send a message to an admin to clear your karma lev
       await group.removeParticipants([author]);
       console.log('Participant removed');
       
-      // Envía un mensaje al modroom
-      const modroom = await client.getChatById(config.modRoom); // Obtiene el ID del modroom desde config.js
-      const chat = await message.getChat(); // Obtener el chat donde se recibió el mensaje
-      const contact = await message.getContact(); // Obtener el contacto que envió el mensaje
+     
+      const modroom = await client.getChatById(config.modRoom); 
+      const chat = await message.getChat(); 
+      const contact = await message.getContact(); 
 
       await modroom.sendMessage(`@${contact.id.user} has been removed from "${chat.name}" by Robert for reaching the karma limit. 💪😎`,
         { mentions: [contact] }

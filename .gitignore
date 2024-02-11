@@ -1,0 +1,8 @@
+node_modules/
+.wwebjs_auth/
+.wwebjs_cache/
+coverage/
+.husky/_
+npm-debug.log
+yarn-error.log
+config.js

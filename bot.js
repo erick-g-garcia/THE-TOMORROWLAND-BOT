@@ -31,7 +31,7 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
   if (message.body.match(/(!test)/gi) && isVip) {
-    message.reply('Up and working Boss 🤖');
+    message.reply('Up and working Boss EDITADO PRUEBA 🤖');
       
   }
 

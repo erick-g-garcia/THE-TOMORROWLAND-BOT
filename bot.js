@@ -93,10 +93,10 @@ if (message.body.startsWith('!status') && isVip) {
         config.modRoom,
         `Yo! I'm up and running.
 
-Blacklisted: ${util.phoneList(config.blacklist, @${contact.id.user})}
-Mute: ${util.phoneList(config.mutelist, @${contact.id.user})}
-Trusted: ${util.phoneList(config.trustlist, @${contact.id.user})}
-Vips: ${util.phoneList(config.vips, @${contact.id.user})}`
+Blacklisted: ${util.phoneList(config.blacklist, contact.id.user)}
+Mute: ${util.phoneList(config.mutelist, contact.id.user)}
+Trusted: ${util.phoneList(config.trustlist, contact.id.user)}
+Vips: ${util.phoneList(config.vips, contact.id.user)}`
     );
 
     return;

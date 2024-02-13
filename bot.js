@@ -99,15 +99,12 @@ if (message.body.startsWith('!status') && isVip) {
 
 Blacklisted:
 ${util.phoneList(blacklistedWithContactId)}
-${util.karmaList(blacklistKarma)}
 
 Mute:
 ${util.phoneList(muteListWithContactId)}
-${util.karmaList(muteKarma)}
 
 Trusted:
 ${util.phoneList(vipsListWithContactId)}
-${util.karmaList(vipsKarma)}`;
 
   // Enviar el mensaje
   client.sendMessage(config.modRoom, statusMessage);

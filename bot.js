@@ -87,28 +87,37 @@ ${util.karmaList(config.karma)}`
 
     return
   }
-  
-function usernameList(userIds) {
-   const chat = await message.getChat()
-    const contact = await message.getContact()
-  const usernames = userIds.map(id => `@${contact.id.user}`); 
+// Función para formatear la lista de nombres de usuario
+async function usernameList(userIds, client) {
+  const usernames = [];
+  for (const userId of userIds) {
+    const contact = await client.getContactById(userId);
+    if (contact) {
+      const chat = await client.getChat(contact.id._serialized);
+      const username = `@${chat.name}`;
+      usernames.push(username);
+    }
+  }
   return usernames.join(', ');
 }
 
 // Código principal
 if (message.body.startsWith('!status') && isVip) {
+  const blacklistedUsers = await usernameList(config.blacklist, client);
+  const mutedUsers = await usernameList(config.mutelist, client);
+  const trustedUsers = await usernameList(config.vips, client);
+
   client.sendMessage(
     config.modRoom,
     `Yo! I'm up and running.
 
-Blacklisted: ${usernameList(config.blacklist)}
-Mute: ${usernameList(config.mutelist)}
-Trusted: ${usernameList(config.vips)}`
+Blacklisted: ${blacklistedUsers}
+Mute: ${mutedUsers}
+Trusted: ${trustedUsers}`
   );
 
   return;
 }
-
 
 
 

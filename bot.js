@@ -89,10 +89,10 @@ ${util.karmaList(config.karma)}`
   }
 
  if (message.body.startsWith('!status') && isVip) {
-  let blacklistedUsers = config.blacklist.map(userId => `@${userId.user}`);
-  let mutedUsers = config.mutelist.map(userId => `@${userId.user}`);
-  let trustedUsers = config.trustlist.map(userId => `@${userId.user}`);
-  let vipUsers = config.vips.map(userId => `@${userId.user}`);
+  let blacklistedUsers = config.blacklist.map(user => `@${user.id.user}`);
+  let mutedUsers = config.mutelist.map(user => `@${user.id.user}`);
+  let trustedUsers = config.trustlist.map(user => `@${user.id.user}`);
+  let vipUsers = config.vips.map(user => `@${user.id.user}`);
 
   client.sendMessage(
     config.modRoom,
@@ -106,6 +106,7 @@ Vips: ${vipUsers.join(', ')}`
 
   return;
 }
+
 
 
 

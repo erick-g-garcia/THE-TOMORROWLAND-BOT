@@ -16,7 +16,9 @@ function calcularTiempoRestante(fechaObjetivo) {
     const tiempoRestante = fechaObjetivo.getTime() - fechaActual.getTime();
     const diasRestantes = Math.floor(tiempoRestante / (1000 * 3600 * 24));
     const horasRestantes = Math.floor((tiempoRestante % (1000 * 3600 * 24)) / (1000 * 3600));
-    return { dias: diasRestantes, horas: horasRestantes };
+    const minutosRestantes = Math.floor((tiempoRestante % (1000 * 3600)) / (1000 * 60));
+    return { dias: diasRestantes, horas: horasRestantes, minutos: minutosRestantes };
+
 }
 const fechaObjetivo = new Date('2024-07-26');
 
@@ -44,7 +46,7 @@ client.on('message', async (message) => {
   
    if (message.body.match(/!countdown/gi)) {
         const { dias, horas } = calcularTiempoRestante(fechaObjetivo);
-        const message = `Hello! There are ${days} days and ${hours} hours left until Tomorrowland.`;
+        const message = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
 
         client.sendMessage(message.from, mensaje);
     }

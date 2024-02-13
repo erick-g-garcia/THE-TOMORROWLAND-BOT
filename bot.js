@@ -87,27 +87,32 @@ ${util.karmaList(config.karma)}`
 
     return
   }
+
 if (message.body.startsWith('!status') && isVip) {
-  console.log('config.vips:', config.vips); // Imprime los datos de config.vips en la consola
-  let vipUsers = config.vips.map(user => {
-    if (user && user.id && user.id.user) {
-      return `@${user.id.user}`;
-    } else {
-      return 'User not found'; // Manejo de error
-    }
-  });
+  const blacklistUsers = mapPhonesToUsers(config.blacklist);
+  const muteUsers = mapPhonesToUsers(config.mutelist);
+  const trustUsers = mapPhonesToUsers(config.trustlist);
+  const vipUsers = mapPhonesToUsers(config.vips);
 
   client.sendMessage(
     config.modRoom,
     `Hey Boss! I'm up and running.
 
-Blacklisted: ${util.phoneList(config.blacklist)}
-Mute: ${util.phoneList(config.mutelist)}
-Trusted: ${util.phoneList(config.trustlist)}
-Vips: ${vipUsers.join(', ')}`
+    Blacklisted: ${blacklistUsers.join(', ')}
+    Mute: ${muteUsers.join(', ')}
+    Trusted: ${trustUsers.join(', ')}
+    Vips: ${vipUsers.join(', ')}`
   );
 
   return;
+}
+
+function mapPhonesToUsers(phoneList) {
+  return Object.values(phoneList).map(phone => {
+    // Assuming phoneList is an object with phone numbers as keys
+    // and usernames as values
+    return phone;
+  });
 }
 
 

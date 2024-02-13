@@ -12,3 +12,21 @@ export default {
     return items.join('\n')
   },
 }
+// util.js
+
+// Esta función mapea una lista de números de teléfono a una cadena que incluye tanto los números de teléfono como los nombres de usuario (si están disponibles)
+function phoneList(phoneList, userData) {
+  const list = Object.values(phoneList).map(phone => {
+    const user = userData[phone];
+    if (user) {
+      return `${phone} (@${user})`;
+    } else {
+      return phone;
+    }
+  });
+  return list.join(', ');
+}
+
+module.exports = {
+  phoneList
+};

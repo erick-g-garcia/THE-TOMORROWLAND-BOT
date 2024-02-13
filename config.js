@@ -1,5 +1,5 @@
 export default {
-  modRoom: '120363211157430528@g.us',
+  modRoom: '120363045998091546@g.us',
   karma: {},
   rooms: [''
   ],

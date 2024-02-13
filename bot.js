@@ -95,7 +95,8 @@ ${util.karmaList(config.karma)}`
 
 Blacklisted: ${util.phoneList(config.blacklist)}
 Mute: ${util.phoneList(config.mutelist)}
-Trusted: ${util.phoneList(config.trustlist)}`
+Trusted: ${util.phoneList(config.trustlist)}
+Vips: ${util.phoneList(config.vips)}`
     )
 
     return
@@ -151,6 +152,22 @@ Trusted: ${util.phoneList(config.trustlist)}`
     })
 
     console.log('Mutelist:', config.mutelist)
+
+    return
+  }
+  if (message.body.startsWith('!vip') && isVip) {
+    if (message.hasQuotedMsg) {
+      const quotedMessage = await message.getQuotedMessage()
+      const quotedAuthor = quotedMessage.author || quotedMessage.from
+      quotedMessage.delete(true)
+      config.vips.push(quotedAuthor)
+    }
+
+    message.mentionedIds.forEach((mention) => {
+      config.vips.push(mention)
+    })
+
+    console.log('Vips:', config.vips)
 
     return
   }

@@ -11,16 +11,15 @@ import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
 // Función para calcular la cantidad de días y horas restantes hasta una fecha específica
-function calcularTiempoRestante(fechaObjetivo) {
-    const fechaActual = new Date();
-    const tiempoRestante = fechaObjetivo.getTime() - fechaActual.getTime();
-    const diasRestantes = Math.floor(tiempoRestante / (1000 * 3600 * 24));
-    const horasRestantes = Math.floor((tiempoRestante % (1000 * 3600 * 24)) / (1000 * 3600));
-    const minutosRestantes = Math.floor((tiempoRestante % (1000 * 3600)) / (1000 * 60));
-    return { dias: diasRestantes, horas: horasRestantes, minutos: minutosRestantes };
-
+function calculateRemainingTime(targetDate) {
+    const currentDate = new Date();
+    const remainingTime = targetDate.getTime() - currentDate.getTime();
+    const remainingDays = Math.floor(remainingTime / (1000 * 3600 * 24));
+    const remainingHours = Math.floor((remainingTime % (1000 * 3600 * 24)) / (1000 * 3600));
+    const remainingMinutes = Math.floor((remainingTime % (1000 * 3600)) / (1000 * 60));
+    return { days: remainingDays, hours: remainingHours, minutes: remainingMinutes };
 }
-const fechaObjetivo = new Date('2024-07-26');
+const targetDate = new Date('2024-07-26');
 
 
 const client = new Client({
@@ -45,7 +44,8 @@ client.on('message', async (message) => {
 
   
    if (message.body.match(/!countdown/gi)) {
-        const { dias, horas } = calcularTiempoRestante(fechaObjetivo);
+        const { days, hours, minutes } = calculateRemainingTime(targetDate);
+
         const message = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
 
         client.sendMessage(message.from, mensaje);

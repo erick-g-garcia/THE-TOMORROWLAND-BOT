@@ -1,6 +1,7 @@
 export default {
   phoneList: function (list) {
-    return list.map((item) => item.replace('@c.us', '')).join(', ')
+    return list.map((item) => item.replace('@c.us', `@${contact.id.user}`)).join(', ');
+
   },
 
   karmaList: function (list) {

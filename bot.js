@@ -13,7 +13,9 @@ const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 // Function to calculate the number of days, hours, and minutes remaining until a specific date
 function calculateRemainingTime(targetDate) {
     const currentDate = new Date();
-    const remainingTime = targetDate.getTime() - currentDate.getTime();
+    // Adjust the timezone offset to CET (Central European Time)
+    const timeZoneOffset = 60; // CET is UTC+1
+    const remainingTime = targetDate.getTime() - currentDate.getTime() + timeZoneOffset * 60 * 1000;
     const remainingDays = Math.floor(remainingTime / (1000 * 3600 * 24));
     const remainingHours = Math.floor((remainingTime % (1000 * 3600 * 24)) / (1000 * 3600));
     const remainingMinutes = Math.floor((remainingTime % (1000 * 3600)) / (1000 * 60));
@@ -44,11 +46,16 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
   
-   if (message.body.match(/!countdown/gi)) {
+   f (message.body.match(/!countdown/gi)) {
         const { days, hours, minutes } = calculateRemainingTime(targetDate);
         const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
-        client.sendMessage(message.from, messageText);
+        await client.sendMessage(message.from, messageText);
+        // Enviar el sticker usando la media key
+        const stickerMediaKey = 'R5ihOBLbbaKJF4wikgExBkoIgZ4hKEQz8Y2kTLV/4wg=';
+        const sticker = new MessageMedia('image/png', stickerMediaKey);
+        await client.sendMessage(message.from, sticker, { sendMediaAsSticker: true });
     }
+
 
 
   if (message.body.match(/(!test)/gi) && isVip) {

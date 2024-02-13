@@ -89,18 +89,39 @@ ${util.karmaList(config.karma)}`
   }
 
   if (message.body.startsWith('!status') && isVip) {
+    const blacklistedUsers = await Promise.all(config.blacklist.map(async (userId) => {
+        const contact = await client.getContactById(userId);
+        return `@${contact.name} (${userId})`;
+    }));
+
+    const mutedUsers = await Promise.all(config.mutelist.map(async (userId) => {
+        const contact = await client.getContactById(userId);
+        return `@${contact.name} (${userId})`;
+    }));
+
+    const trustedUsers = await Promise.all(config.trustlist.map(async (userId) => {
+        const contact = await client.getContactById(userId);
+        return `@${contact.name} (${userId})`;
+    }));
+
+    const vipUsers = await Promise.all(config.vips.map(async (userId) => {
+        const contact = await client.getContactById(userId);
+        return `@${contact.name} (${userId})`;
+    }));
+
     client.sendMessage(
-      config.modRoom,
-      `Yo! I'm up and running.
+        config.modRoom,
+        `Yo! I'm up and running.
 
-Blacklisted: ${util.phoneList(config.blacklist)}
-Mute: ${util.phoneList(config.mutelist)}
-Trusted: ${util.phoneList(config.trustlist)}
-Vips: ${util.phoneList(config.vips)}`
-    )
+Blacklisted: ${blacklistedUsers.join(', ')}
+Mute: ${mutedUsers.join(', ')}
+Trusted: ${trustedUsers.join(', ')}
+Vips: ${vipUsers.join(', ')}`
+    );
 
-    return
-  }
+    return;
+}
+
 
   if (message.body.startsWith('!flag') && isVip) {
     if (message.hasQuotedMsg) {

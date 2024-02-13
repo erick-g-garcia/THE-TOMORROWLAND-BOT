@@ -46,7 +46,7 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
   
-   f (message.body.match(/!countdown/gi)) {
+   if (message.body.match(/!countdown/gi)) {
         const { days, hours, minutes } = calculateRemainingTime(targetDate);
         const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
         await client.sendMessage(message.from, messageText);

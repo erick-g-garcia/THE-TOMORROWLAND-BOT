@@ -1,9 +1,10 @@
 export default {
-  phoneList: function (contactList) {
-    return contactList.map((contact) => {
-      const item = contact.item.replace('@c.us', '');
-      const userId = contact.userId;
-      return `${item} (ID: ${userId})`;
+  phoneList: function (list) {
+    return list.map((item) => {
+      const contact = client.getContactById(item); // Assuming client.getContactById() is a function to get contact details by ID
+      const phoneNumber = item.replace('@c.us', '');
+      const user = contact ? `@${contact.id.user}` : ''; // Get user if contact exists
+      return `${user} (${phoneNumber})`;
     }).join(', ');
   },
 

@@ -89,38 +89,24 @@ ${util.karmaList(config.karma)}`
   }
 
  if (message.body.startsWith('!status') && isVip) {
-    const blacklistedUsers = await Promise.all(config.blacklist.map(async (userId) => {
-        const contact = await client.getContactById(userId);
-        return `@${contact.name} (${userId})`;
-    }));
+  let blacklistedUsers = config.blacklist.map(userId => `@${userId.user}`);
+  let mutedUsers = config.mutelist.map(userId => `@${userId.user}`);
+  let trustedUsers = config.trustlist.map(userId => `@${userId.user}`);
+  let vipUsers = config.vips.map(userId => `@${userId.user}`);
 
-    const mutedUsers = await Promise.all(config.mutelist.map(async (userId) => {
-        const contact = await client.getContactById(userId);
-        return `@${contact.name} (${userId})`;
-    }));
-
-    const trustedUsers = await Promise.all(config.trustlist.map(async (userId) => {
-        const contact = await client.getContactById(userId);
-        return `@${contact.name} (${userId})`;
-    }));
-
-    const vipUsers = await Promise.all(config.vips.map(async (userId) => {
-        const contact = await client.getContactById(userId);
-        return `@${contact.name} (${userId})`;
-    }));
-
-    client.sendMessage(
-        config.modRoom,
-        `Yo! I'm up and running.
+  client.sendMessage(
+    config.modRoom,
+    `Hey Boss! I'm up and running.
 
 Blacklisted: ${blacklistedUsers.join(', ')}
 Mute: ${mutedUsers.join(', ')}
 Trusted: ${trustedUsers.join(', ')}
 Vips: ${vipUsers.join(', ')}`
-    );
+  );
 
-    return;
+  return;
 }
+
 
 
 

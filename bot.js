@@ -88,29 +88,32 @@ ${util.karmaList(config.karma)}`
     return
   }
 
+import util from './util.js'; // Importa el objeto util desde el archivo util.js
+
 if (message.body.startsWith('!status') && isVip) {
   // Obtener la lista de números de teléfono con IDs de contacto
-  const blacklistedWithContactId = util.phoneListWithContactId(config.blacklist || []);
-  const muteListWithContactId = util.phoneListWithContactId(config.mutelist || []);
-  const vipsListWithContactId = util.phoneListWithContactId(config.vips || []);
+  const blacklistedWithContactId = util.phoneListWithContactId(config.blacklist);
+  const muteListWithContactId = util.phoneListWithContactId(config.mutelist);
+  const vipsListWithContactId = util.phoneListWithContactId(config.vips);
 
   // Construir el mensaje con la información
   const statusMessage = `Yo! I'm up and running.
 
 Blacklisted:
-${blacklistedWithContactId.length ? util.phoneList(blacklistedWithContactId) : 'No blacklisted numbers'}
+${util.contactIdList(blacklistedWithContactId)}
 
 Mute:
-${muteListWithContactId.length ? util.phoneList(muteListWithContactId) : 'No muted numbers'}
+${util.contactIdList(muteListWithContactId)}
 
 Trusted:
-${vipsListWithContactId.length ? util.phoneList(vipsListWithContactId) : 'No trusted numbers'}`;
+${util.contactIdList(vipsListWithContactId)}`;
 
   // Enviar el mensaje
   client.sendMessage(config.modRoom, statusMessage);
 
   return;
-} 
+}
+
 
 
   if (message.body.startsWith('!flag') && isVip) {

@@ -90,25 +90,21 @@ ${util.karmaList(config.karma)}`
 
 if (message.body.startsWith('!status') && isVip) {
   // Obtener la lista de números de teléfono con IDs de contacto
-  const blacklistedWithContactId = util.phoneListWithContactId(config.blacklist);
-  const muteListWithContactId = util.phoneListWithContactId(config.mutelist);
-  const trustListWithContactId = util.phoneListWithContactId(config.trustlist);
-  const vipsListWithContactId = util.phoneListWithContactId(config.vips);
+  const blacklistedWithContactId = util.phoneListWithContactId(config.blacklist || []);
+  const muteListWithContactId = util.phoneListWithContactId(config.mutelist || []);
+  const vipsListWithContactId = util.phoneListWithContactId(config.vips || []);
 
   // Construir el mensaje con la información
   const statusMessage = `Yo! I'm up and running.
 
 Blacklisted:
-${util.phoneList(blacklistedWithContactId)}
+${blacklistedWithContactId.length ? util.phoneList(blacklistedWithContactId) : 'No blacklisted numbers'}
 
 Mute:
-${util.phoneList(muteListWithContactId)}
+${muteListWithContactId.length ? util.phoneList(muteListWithContactId) : 'No muted numbers'}
 
 Trusted:
-${util.phoneList(trustListWithContactId)}
-
-Trusted:
-${util.phoneList(vipsListWithContactId)}`;
+${vipsListWithContactId.length ? util.phoneList(vipsListWithContactId) : 'No trusted numbers'}`;
 
   // Enviar el mensaje
   client.sendMessage(config.modRoom, statusMessage);

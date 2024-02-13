@@ -88,29 +88,18 @@ ${util.karmaList(config.karma)}`
     return
   }
 
-if (message.body.startsWith('!status') && isVip) {
-  // Obtener la lista de números de teléfono con IDs de contacto
-  const blacklistedWithContactId = util.phoneListWithContactId(config.blacklist);
-  const muteListWithContactId = util.phoneListWithContactId(config.mutelist);
-  const vipsListWithContactId = util.phoneListWithContactId(config.vips);
+ if (message.body.startsWith('!status') && isVip) {
+    client.sendMessage(
+      config.modRoom,
+      `Yo! I'm up and running.
 
-  // Construir el mensaje con la información
-  const statusMessage = `Yo! I'm up and running.
+Blacklisted: ${util.phoneList(config.blacklist)}
+Mute: ${util.phoneList(config.mutelist)}
+Trusted: ${util.phoneList(config.trustlist)}`
+    )
 
-Blacklisted:
-${util.contactIdList(blacklistedWithContactId)}
-
-Mute:
-${util.contactIdList(muteListWithContactId)}
-
-Trusted:
-${util.contactIdList(vipsListWithContactId)}`;
-
-  // Enviar el mensaje
-  client.sendMessage(config.modRoom, statusMessage);
-
-  return;
-}
+    return
+  }
 
 
 

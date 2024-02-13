@@ -10,6 +10,10 @@ export default {
     return list.map(item => item.phone).join(', ');
   },
 
+  contactIdList: function (list) {
+    return list.map(item => item.contactId).join(', ');
+  },
+
   karmaList: function (list) {
     var items = [];
     Object.keys(list).forEach((phone) => {
@@ -19,4 +23,5 @@ export default {
     return items.join('\n');
   },
 };
+
 

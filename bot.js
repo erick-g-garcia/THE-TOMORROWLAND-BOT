@@ -24,6 +24,22 @@ client.on('ready', async () => {
   console.log('Chop chop. Client is ready!');
 });
 
+function calcularTiempoRestante(fechaObjetivo) {
+    const fechaActual = new Date();
+    const tiempoRestante = fechaObjetivo.getTime() - fechaActual.getTime();
+    const diasRestantes = Math.floor(tiempoRestante / (1000 * 3600 * 24));
+    const horasRestantes = Math.floor((tiempoRestante % (1000 * 3600 * 24)) / (1000 * 3600));
+    return { dias: diasRestantes, horas: horasRestantes };
+}
+const fechaObjetivo = new Date('2024-07-26');
+
+    if (message.body.match(/!countdown/gi)) {
+        const { dias, horas } = calcularTiempoRestante(fechaObjetivo);
+        const mensaje = `¡Hola! Faltan ${dias} días y ${horas} horas para Tomorrowland.`;
+        client.sendMessage(message.from, mensaje);
+    }
+});
+
 client.on('message', async (message) => {
   console.log('Received message:', message);
 

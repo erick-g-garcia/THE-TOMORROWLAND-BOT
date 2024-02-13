@@ -234,7 +234,7 @@ ${util.phoneList(vipsListWithContactId)}
     return
   }
 
-  if ((!isVip) && spam.isSuspicious(message.body)) {
+ if ((!isVip) && spam.isSuspicious(message.body)) {
     const chat = await message.getChat()
     const contact = await message.getContact()
 
@@ -245,6 +245,7 @@ ${util.phoneList(vipsListWithContactId)}
       `⛔ WARNING! ⛔ @${contact.id.user} (Karma: ${config.karma[author]}), has sent messages with suspicious content to "${chat.name}".`,
       { mentions: [contact] }
     )
+
   }
 
   if (isVip) {

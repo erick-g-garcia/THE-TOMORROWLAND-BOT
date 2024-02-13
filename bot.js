@@ -88,8 +88,6 @@ ${util.karmaList(config.karma)}`
     return
   }
 
-import util from './util.js'; // Importa el objeto util desde el archivo util.js
-
 if (message.body.startsWith('!status') && isVip) {
   // Obtener la lista de números de teléfono con IDs de contacto
   const blacklistedWithContactId = util.phoneListWithContactId(config.blacklist);

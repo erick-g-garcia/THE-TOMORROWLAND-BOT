@@ -44,8 +44,37 @@ client.on('message', async (message) => {
   
   if (message.body.match(/!countdown/gi)) {
         const { dias, horas } = calcularTiempoRestante(fechaObjetivo);
-        const mensaje = `¡Hola! Faltan ${dias} días y ${horas} horas para Tomorrowland.`;
-        client.sendMessage(message.from, mensaje);
+        const mensaje = `<!doctype html>
+                        <html>
+                        <head>
+                        <meta charset="utf-8">
+                        <title>Contador regresivo</title>
+                        <link href="contador.css" rel="stylesheet" type="text/css">
+                        </head>
+                        <body>
+                        <div id="micontador" data-final="2022/12/05">
+                           <div class="num">
+                              <div class="dig"><span>${dias}</span></div>
+                              <div class="label">Días</div>
+                           </div>
+                           <div class="num">
+                              <div class="dig"><span>${horas}</span></div>
+                              <div class="label">Horas</div>
+                           </div> 
+                           <div class="num">
+                              <div class="dig"><span>&nbsp;</span></div>
+                              <div class="label">Min</div>
+                           </div>
+                           <div class="num">
+                              <div class="dig"><span>&nbsp;</span></div>
+                              <div class="label">Seg</div>
+                           </div>
+                        </div> 
+                        <script src="contador.js"></script> 
+                        </body>
+                        </html>`;
+
+        client.sendMessage(message.from, mensaje, { sendMediaAsSticker: false });
     }
 
 

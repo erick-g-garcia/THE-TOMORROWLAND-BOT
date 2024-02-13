@@ -95,6 +95,7 @@ ${util.karmaList(config.karma)}`
 
 Blacklisted: ${util.phoneList(config.blacklist)}
 Mute: ${util.phoneList(config.mutelist)}
+vips: ${util.phoneList(config.vips)}
 Trusted: ${util.phoneList(config.trustlist)}`
     )
 

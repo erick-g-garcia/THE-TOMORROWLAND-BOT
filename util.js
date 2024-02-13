@@ -1,9 +1,9 @@
 export default {
   phoneList: function (contactList) {
     return contactList.map((contact) => {
-      const phoneNumber = contact.phoneNumber.replace('@c.us', '');
+      const item = contact.item.replace('@c.us', '');
       const userId = contact.userId;
-      return `${phoneNumber} (ID: ${userId})`;
+      return `${item} (ID: ${userId})`;
     }).join(', ');
   },
 

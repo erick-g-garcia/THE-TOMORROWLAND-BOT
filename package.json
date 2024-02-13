@@ -19,7 +19,6 @@
   "scripts": {
     "prepare": "husky install",
     "test": "ava",
-    "update": "git pull origin main",
     "start": "node bot.js"
   },
   "lint-staged": {

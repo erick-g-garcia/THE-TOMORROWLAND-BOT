@@ -38,7 +38,6 @@ const fechaObjetivo = new Date('2024-07-26');
         const mensaje = `¡Hola! Faltan ${dias} días y ${horas} horas para Tomorrowland.`;
         client.sendMessage(message.from, mensaje);
     }
-});
 
 client.on('message', async (message) => {
   console.log('Received message:', message);

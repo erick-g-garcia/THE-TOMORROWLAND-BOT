@@ -159,7 +159,7 @@ Vips: ${util.phoneList(config.vips)}`
     if (message.hasQuotedMsg) {
       const quotedMessage = await message.getQuotedMessage()
       const quotedAuthor = quotedMessage.author || quotedMessage.from
-      quotedMessage.delete(true)
+      quotedMessage.delete(false)
       config.vips.push(quotedAuthor)
     }
 

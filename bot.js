@@ -10,6 +10,17 @@ import { spawn } from 'child_process';
 import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
+// Función para calcular la cantidad de días y horas restantes hasta una fecha específica
+function calcularTiempoRestante(fechaObjetivo) {
+    const fechaActual = new Date();
+    const tiempoRestante = fechaObjetivo.getTime() - fechaActual.getTime();
+    const diasRestantes = Math.floor(tiempoRestante / (1000 * 3600 * 24));
+    const horasRestantes = Math.floor((tiempoRestante % (1000 * 3600 * 24)) / (1000 * 3600));
+    return { dias: diasRestantes, horas: horasRestantes };
+}
+const fechaObjetivo = new Date('2024-07-26');
+
+
 const client = new Client({
   authStrategy: new LocalAuth(),
   userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/110.0',
@@ -24,26 +35,19 @@ client.on('ready', async () => {
   console.log('Chop chop. Client is ready!');
 });
 
-function calcularTiempoRestante(fechaObjetivo) {
-    const fechaActual = new Date();
-    const tiempoRestante = fechaObjetivo.getTime() - fechaActual.getTime();
-    const diasRestantes = Math.floor(tiempoRestante / (1000 * 3600 * 24));
-    const horasRestantes = Math.floor((tiempoRestante % (1000 * 3600 * 24)) / (1000 * 3600));
-    return { dias: diasRestantes, horas: horasRestantes };
-}
-const fechaObjetivo = new Date('2024-07-26');
-
-    if (message.body.match(/!countdown/gi)) {
-        const { dias, horas } = calcularTiempoRestante(fechaObjetivo);
-        const mensaje = `¡Hola! Faltan ${dias} días y ${horas} horas para Tomorrowland.`;
-        client.sendMessage(message.from, mensaje);
-    }
-
 client.on('message', async (message) => {
   console.log('Received message:', message);
 
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
+
+  
+  if (message.body.match(/!countdown/gi)) {
+        const { dias, horas } = calcularTiempoRestante(fechaObjetivo);
+        const mensaje = `¡Hola! Faltan ${dias} días y ${horas} horas para Tomorrowland.`;
+        client.sendMessage(message.from, mensaje);
+    }
+
 
   if (message.body.match(/(!test)/gi) && isVip) {
     message.reply('Up and working Boss 🤖');

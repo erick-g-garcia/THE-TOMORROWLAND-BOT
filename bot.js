@@ -10,17 +10,17 @@ import { spawn } from 'child_process';
 import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
-// Función para calcular la cantidad de días y horas restantes hasta una fecha específica
+// Function to calculate the number of days and hours remaining until a specific date
 function calculateRemainingTime(targetDate) {
     const currentDate = new Date();
     const remainingTime = targetDate.getTime() - currentDate.getTime();
     const remainingDays = Math.floor(remainingTime / (1000 * 3600 * 24));
     const remainingHours = Math.floor((remainingTime % (1000 * 3600 * 24)) / (1000 * 3600));
-    const remainingMinutes = Math.floor((remainingTime % (1000 * 3600)) / (1000 * 60));
-    return { days: remainingDays, hours: remainingHours, minutes: remainingMinutes };
+    return { days: remainingDays, hours: remainingHours };
 }
-const targetDate = new Date('2024-07-26');
 
+// Target date for the countdown (July 26, 2024)
+const targetDate = new Date('2024-07-26');
 
 const client = new Client({
   authStrategy: new LocalAuth(),
@@ -44,11 +44,9 @@ client.on('message', async (message) => {
 
   
    if (message.body.match(/!countdown/gi)) {
-        const { days, hours, minutes } = calculateRemainingTime(targetDate);
-
-        const message = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
-
-        client.sendMessage(message.from, mensaje);
+        const { days, hours } = calculateRemainingTime(targetDate);
+        const messageText = `Hello! There are ${days} days and ${hours} hours left until Tomorrowland.`;
+        client.sendMessage(message.from, messageText);
     }
 
 

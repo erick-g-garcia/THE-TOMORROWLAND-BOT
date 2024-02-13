@@ -87,37 +87,34 @@ ${util.karmaList(config.karma)}`
 
     return
   }
-// Función para formatear la lista de nombres de usuario
-async function usernameList(userIds, client) {
-  const usernames = [];
-  for (const userId of userIds) {
-    const contact = await client.getContactById(userId);
-    if (contact) {
-      const chat = await client.getChat(contact.id._serialized);
-      const username = `@${chat.name}`;
-      usernames.push(username);
-    }
-  }
-  return usernames.join(', ');
-}
 
-// Código principal
 if (message.body.startsWith('!status') && isVip) {
-  const blacklistedUsers = await usernameList(config.blacklist, client);
-  const mutedUsers = await usernameList(config.mutelist, client);
-  const trustedUsers = await usernameList(config.vips, client);
+  // Obtener la lista de números de teléfono con IDs de contacto
+  const blacklistedWithContactId = util.phoneListWithContactId(config.blacklist);
+  const muteListWithContactId = util.phoneListWithContactId(config.mutelist);
+  const vipsListWithContactId = util.phoneListWithContactId(config.vips);
 
-  client.sendMessage(
-    config.modRoom,
-    `Yo! I'm up and running.
+  // Construir el mensaje con la información
+  const statusMessage = `Yo! I'm up and running.
 
-Blacklisted: ${blacklistedUsers}
-Mute: ${mutedUsers}
-Trusted: ${trustedUsers}`
-  );
+Blacklisted:
+${util.phoneList(blacklistedWithContactId)}
+${util.karmaList(blacklistKarma)}
+
+Mute:
+${util.phoneList(muteListWithContactId)}
+${util.karmaList(muteKarma)}
+
+Trusted:
+${util.phoneList(vipsListWithContactId)}
+${util.karmaList(vipsKarma)}`;
+
+  // Enviar el mensaje
+  client.sendMessage(config.modRoom, statusMessage);
 
   return;
 }
+
 
 
 

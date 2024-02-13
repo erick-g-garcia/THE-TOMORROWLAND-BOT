@@ -115,6 +115,14 @@ function mapPhonesToUsers(phoneList) {
   });
 }
 
+function mapPhonesToUsers(phoneList) {
+  return Object.values(phoneList).map(phone => {
+    // Assuming phoneList is an object with phone numbers as keys
+    // and usernames as values
+    return phone;
+  });
+}
+
 
 function mapPhonesToUsers(phoneList) {
   return Object.values(phoneList).map(phone => {

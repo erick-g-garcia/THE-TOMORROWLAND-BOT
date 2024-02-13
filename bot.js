@@ -95,7 +95,6 @@ ${util.karmaList(config.karma)}`
 
 Blacklisted: ${util.phoneList(config.blacklist)}
 Mute: ${util.phoneList(config.mutelist)}
-Trusted: ${util.phoneList(config.trustlist.map(contact => ({ phoneNumber: contact.phoneNumber, userId: contact.userId })))}
 Vips: ${util.phoneList(config.vips.map(contact => ({ phoneNumber: contact.phoneNumber, userId: contact.userId })))}`
     );
 

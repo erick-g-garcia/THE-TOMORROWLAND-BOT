@@ -88,7 +88,7 @@ ${util.karmaList(config.karma)}`
     return
   }
 
-  if (message.body.startsWith('!status') && isVip) {
+ if (message.body.startsWith('!status') && isVip) {
     const blacklistedUsers = await Promise.all(config.blacklist.map(async (userId) => {
         const contact = await client.getContactById(userId);
         return `@${contact.name} (${userId})`;
@@ -121,6 +121,7 @@ Vips: ${vipUsers.join(', ')}`
 
     return;
 }
+
 
 
   if (message.body.startsWith('!flag') && isVip) {

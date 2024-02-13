@@ -90,17 +90,18 @@ ${util.karmaList(config.karma)}`
 
  if (message.body.startsWith('!status') && isVip) {
     client.sendMessage(
-      config.modRoom,
-      `Yo! I'm up and running.
+        config.modRoom,
+        `Yo! I'm up and running.
 
 Blacklisted: ${util.phoneList(config.blacklist)}
 Mute: ${util.phoneList(config.mutelist)}
-Trusted: ${util.phoneList(config.trustlist)}
-Vips: ${util.phoneList(config.vips)}`
-    )
+Trusted: ${util.phoneList(config.trustlist.map(contact => ({ phoneNumber: contact.phoneNumber, userId: contact.userId })))}
+Vips: ${util.phoneList(config.vips.map(contact => ({ phoneNumber: contact.phoneNumber, userId: contact.userId })))}`
+    );
 
-    return
-  }
+    return;
+}
+
 
 
 

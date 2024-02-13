@@ -88,19 +88,25 @@ ${util.karmaList(config.karma)}`
     return
   }
   
-  if (message.body.startsWith('!status') && isVip) {
-    client.sendMessage(
-      config.modRoom,
-      `Yo! I'm up and running.
+function usernameList(userIds) {
+  const usernames = userIds.map(id => `@${id.user}`);
+  return usernames.join(', ');
+}
 
-Blacklisted: ${util.phoneList(config.blacklist)}
-Mute: ${util.phoneList(config.mutelist)}
-vips: ${util.phoneList(config.vips)}
-Trusted: ${util.phoneList(config.trustlist)}`
-    )
+// Código principal
+if (message.body.startsWith('!status') && isVip) {
+  client.sendMessage(
+    config.modRoom,
+    `Yo! I'm up and running.
 
-    return
-  }
+Blacklisted: ${usernameList(config.blacklist)}
+Mute: ${usernameList(config.mutelist)}
+Trusted: ${usernameList(config.vips)}`
+  );
+
+  return;
+}
+
 
 async function mapPhonesToUsers(phoneList, client) {
   const users = [];

@@ -87,21 +87,22 @@ ${util.karmaList(config.karma)}`
 
     return
   }
-
+  
 if (message.body.startsWith('!status') && isVip) {
-  const blacklistUsers = await mapPhonesToUsers(config.blacklist, client);
-  const muteUsers = await mapPhonesToUsers(config.mutelist, client);
-  const trustUsers = await mapPhonesToUsers(config.trustlist, client);
-  const vipUsers = await mapPhonesToUsers(config.vips, client);
+  // Llamar a phoneList con el segundo argumento userData
+  const blacklistUsers = util.phoneList(config.blacklist, userData);
+  const muteUsers = util.phoneList(config.mutelist, userData);
+  const trustUsers = util.phoneList(config.trustlist, userData);
+  const vipUsers = util.phoneList(config.vips, userData);
 
   client.sendMessage(
     config.modRoom,
     `Hey Boss! I'm up and running.
 
-    Blacklisted: ${blacklistUsers.join(', ')}
-    Mute: ${muteUsers.join(', ')}
-    Trusted: ${trustUsers.join(', ')}
-    Vips: ${vipUsers.join(', ')}`
+    Blacklisted: ${blacklistUsers}
+    Mute: ${muteUsers}
+    Trusted: ${trustUsers}
+    Vips: ${vipUsers}`
   );
 
   return;

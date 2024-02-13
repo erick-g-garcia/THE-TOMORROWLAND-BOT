@@ -89,10 +89,10 @@ ${util.karmaList(config.karma)}`
   }
 
 if (message.body.startsWith('!status') && isVip) {
-  const blacklistUsers = mapPhonesToUsers(config.blacklist);
-  const muteUsers = mapPhonesToUsers(config.mutelist);
-  const trustUsers = mapPhonesToUsers(config.trustlist);
-  const vipUsers = mapPhonesToUsers(config.vips);
+  const blacklistUsers = await mapPhonesToUsers(config.blacklist, client);
+  const muteUsers = await mapPhonesToUsers(config.mutelist, client);
+  const trustUsers = await mapPhonesToUsers(config.trustlist, client);
+  const vipUsers = await mapPhonesToUsers(config.vips, client);
 
   client.sendMessage(
     config.modRoom,
@@ -106,6 +106,21 @@ if (message.body.startsWith('!status') && isVip) {
 
   return;
 }
+
+async function mapPhonesToUsers(phoneList, client) {
+  const users = [];
+  for (const phone of Object.values(phoneList)) {
+    try {
+      const contact = await client.getContactById(phone);
+      users.push(`@${contact.id.user}`);
+    } catch (error) {
+      console.error(`Error fetching user for phone number ${phone}:`, error);
+      users.push(phone);
+    }
+  }
+  return users;
+}
+
 
 function mapPhonesToUsers(phoneList) {
   return Object.values(phoneList).map(phone => {

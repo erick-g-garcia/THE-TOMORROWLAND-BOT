@@ -1,27 +1,21 @@
 export default {
-  phoneList: function (list, userData) {
-    const formattedList = list.map((item) => {
-      const user = userData[item];
-      if (user) {
-        return `${item} (@${user})`;
-      } else {
-        return item;
-      }
+  phoneListWithContactId: function (list) {
+    return list.map((item) => {
+      const [phone, contactId] = item.split('@c.us');
+      return { phone: phone.trim(), contactId: contactId.trim() };
     });
-    return formattedList.join(', ');
   },
 
-  karmaList: function (list, userData) {
-    var items = []
+  phoneList: function (list) {
+    return list.map(item => item.phone).join(', ');
+  },
+
+  karmaList: function (list) {
+    var items = [];
     Object.keys(list).forEach((phone) => {
-      const user = userData[phone];
-      if (user) {
-        items.push(`@${user}: ${list[phone]}`);
-      } else {
-        items.push(`${phone}: ${list[phone]}`);
-      }
+      items.push(`${phone.replace('@c.us', '')}: ${list[phone]}`);
     });
 
     return items.join('\n');
-  }
+  },
 };

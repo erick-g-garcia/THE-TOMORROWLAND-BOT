@@ -87,25 +87,28 @@ ${util.karmaList(config.karma)}`
 
     return
   }
-
- if (message.body.startsWith('!status') && isVip) {
-  let blacklistedUsers = config.blacklist.map(user => `@${user.id.user}`);
-  let mutedUsers = config.mutelist.map(user => `@${user.id.user}`);
-  let trustedUsers = config.trustlist.map(user => `@${user.id.user}`);
-  let vipUsers = config.vips.map(user => `@${user.id.user}`);
+if (message.body.startsWith('!status') && isVip) {
+  let vipUsers = config.vips.map(user => {
+    if (user && user.id && user.id.user) {
+      return `@${user.id.user}`;
+    } else {
+      return 'User not found'; // Manejo de error
+    }
+  });
 
   client.sendMessage(
     config.modRoom,
     `Hey Boss! I'm up and running.
 
-Blacklisted: ${blacklistedUsers.join(', ')}
-Mute: ${mutedUsers.join(', ')}
-Trusted: ${trustedUsers.join(', ')}
+Blacklisted: ${util.phoneList(config.blacklist)}
+Mute: ${util.phoneList(config.mutelist)}
+Trusted: ${util.phoneList(config.trustlist)}
 Vips: ${vipUsers.join(', ')}`
   );
 
   return;
 }
+
 
 
 

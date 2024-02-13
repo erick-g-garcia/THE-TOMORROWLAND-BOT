@@ -88,6 +88,7 @@ ${util.karmaList(config.karma)}`
     return
   }
 if (message.body.startsWith('!status') && isVip) {
+  console.log('config.vips:', config.vips); // Imprime los datos de config.vips en la consola
   let vipUsers = config.vips.map(user => {
     if (user && user.id && user.id.user) {
       return `@${user.id.user}`;

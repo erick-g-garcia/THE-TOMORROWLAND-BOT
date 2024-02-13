@@ -89,7 +89,7 @@ ${util.karmaList(config.karma)}`
   }
   
 function usernameList(userIds) {
-  const usernames = userIds.map(id => `@${id.user}`);
+  const usernames = userIds.map(id => `@${contact.id.user}`); 
   return usernames.join(', ');
 }
 
@@ -106,49 +106,6 @@ Trusted: ${usernameList(config.vips)}`
 
   return;
 }
-
-
-async function mapPhonesToUsers(phoneList, client) {
-  const users = [];
-  for (const phone of Object.values(phoneList)) {
-    try {
-      const contact = await client.getContactById(phone);
-      users.push(`@${contact.id.user}`);
-    } catch (error) {
-      console.error(`Error fetching user for phone number ${phone}:`, error);
-      users.push(phone);
-    }
-  }
-  return users;
-}
-
-
-function mapPhonesToUsers(phoneList) {
-  return Object.values(phoneList).map(phone => {
-    // Assuming phoneList is an object with phone numbers as keys
-    // and usernames as values
-    return phone;
-  });
-}
-
-function mapPhonesToUsers(phoneList) {
-  return Object.values(phoneList).map(phone => {
-    // Assuming phoneList is an object with phone numbers as keys
-    // and usernames as values
-    return phone;
-  });
-}
-
-
-function mapPhonesToUsers(phoneList) {
-  return Object.values(phoneList).map(phone => {
-    // Assuming phoneList is an object with phone numbers as keys
-    // and usernames as values
-    return phone;
-  });
-}
-
-
 
 
 

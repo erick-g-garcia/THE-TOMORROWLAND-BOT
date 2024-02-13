@@ -89,6 +89,8 @@ ${util.karmaList(config.karma)}`
   }
   
 function usernameList(userIds) {
+   const chat = await message.getChat()
+    const contact = await message.getContact()
   const usernames = userIds.map(id => `@${contact.id.user}`); 
   return usernames.join(', ');
 }

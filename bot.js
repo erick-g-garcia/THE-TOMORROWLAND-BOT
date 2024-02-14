@@ -62,6 +62,8 @@ client.on('message', async (message) => {
      const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
      await client.sendMessage(message.from, messageText);
 
+  }
+
 
       
 

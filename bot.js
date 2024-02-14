@@ -68,8 +68,13 @@ client.on('message', async (message) => {
      const currentDate = new Date();
      console.log(`Command "!countdown" triggered at: ${currentDate.toLocaleString()}`);
 
-     // Define the target date here (replace the placeholder with your target date)
-     const targetDate = new Date("2024-07-16T00:00:00Z"); // Adjust the date as necessary
+     // Calculate the target date based on the current date
+     const targetDate = new Date(currentDate.getFullYear(), 6, 16, 0, 0, 0); // July 16 of the current year, at midnight
+     if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 16)) {
+         // If the current date is after July 16, set the target date to July 16 of the next year
+         targetDate.setFullYear(targetDate.getFullYear() + 1);
+     }
+
      const { days, hours, minutes } = calculateRemainingTime(targetDate);
      const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
      await client.sendMessage(message.from, messageText);

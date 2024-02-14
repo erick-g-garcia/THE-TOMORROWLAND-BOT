@@ -56,33 +56,6 @@ function calculateRemainingTime(targetDate) {
     return { days: remainingDays, hours: remainingHours, minutes: remainingMinutes };
 }
 
-// Function to send the message to all groups the bot is a member of
-async function sendUpdateToAllGroups() {
-    console.log('Sending update to all groups...');
-
-    try {
-        const chats = await client.getChats();
-        console.log('Number of chats:', chats.length);
-
-        // Message to be sent as an update
-        const updateMessage = 'Update message here';
-
-        // Iterate over each chat and send the update message
-        for (const chat of chats) {
-            if (chat.isGroup) {
-                console.log('Sending update to group:', chat.name || 'Unnamed group');
-                await client.sendMessage(chat.id._serialized, updateMessage);
-            }
-        }
-
-        console.log('Update sent to all groups.');
-    } catch (error) {
-        console.error('Error sending update to all groups:', error);
-    }
-}
-
-// Configure the interval to send updates to all groups every minute
-setInterval(sendUpdateToAllGroups, 60000); // 60000 milliseconds = 1 minute
 
 
 
@@ -92,6 +65,20 @@ if (message.body.match(/!countdown/gi)) {
     const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
     await client.sendMessage(message.from, messageText);
 }
+    // Comando para obtener la lista de todos los grupos
+if (message.body.match(/!groups/gi)) {
+    const chats = await client.getChats();
+    let groupsList = "List of Groups:\n\n";
+
+    chats.forEach(chat => {
+        if (chat.isGroup) {
+            groupsList += `${chat.name} - ${chat.id._serialized}\n`;
+        }
+    });
+
+    await client.sendMessage(message.from, groupsList);
+}
+
 
 
 

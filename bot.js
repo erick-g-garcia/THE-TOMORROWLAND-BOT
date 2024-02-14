@@ -69,26 +69,41 @@ if (message.body.match(/!countdown/gi)) {
      const currentFormattedTime = currentDate.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false });
      console.log(`Command "!countdown" triggered at: ${currentDate.toLocaleString()} (${currentFormattedTime} GMT)`);
 
-     // Calculate the target date based on the current date
+     // Calculate the target dates based on the current date
      const currentYear = currentDate.getFullYear();
-     const targetDate = new Date(currentYear, 6, 16, 0, 0, 0); // July (month 6 is July) 16 of the current year, at midnight
-     if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 16)) {
-         // If the current date is after July 16, set the target date to July 16 of the next year
-         targetDate.setFullYear(currentYear + 1);
+     const targetDate1 = new Date(currentYear, 6, 19, 0, 0, 0); // July 19 of the current year, at midnight
+     const targetDate2 = new Date(currentYear, 6, 26, 0, 0, 0); // July 26 of the current year, at midnight
+
+     if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 19)) {
+         // If the current date is after July 19, set the target date1 to July 19 of the next year
+         targetDate1.setFullYear(currentYear + 1);
+     }
+
+     if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 26)) {
+         // If the current date is after July 26, set the target date2 to July 26 of the next year
+         targetDate2.setFullYear(currentYear + 1);
      }
 
      console.log(`Current Date: ${currentDate.toLocaleString()} (${currentFormattedTime} GMT)`);
-     console.log(`Target Date: ${targetDate.toLocaleString()} GMT`);
+     console.log(`Target Date 1: ${targetDate1.toLocaleString()} GMT`);
+     console.log(`Target Date 2: ${targetDate2.toLocaleString()} GMT`);
 
-     // Convert the target date to CET
-     const targetDateCET = new Date(targetDate.toLocaleString('en-US', {timeZone: 'CET'}));
+     // Convert the target dates to CET
+     const targetDateCET1 = new Date(targetDate1.toLocaleString('en-US', {timeZone: 'CET'}));
+     const targetDateCET2 = new Date(targetDate2.toLocaleString('en-US', {timeZone: 'CET'}));
 
-     const { days, hours, minutes } = calculateRemainingTime(targetDateCET);
-     const messageTime = targetDateCET.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
-     const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland. The event will start at ${messageTime} CET.`;
-     await client.sendMessage(message.from, messageText);
+     const { days: days1, hours: hours1, minutes: minutes1 } = calculateRemainingTime(targetDateCET1);
+     const messageTime1 = targetDateCET1.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
+     const messageText1 = `Hello! There are ${days1} days, ${hours1} hours, and ${minutes1} minutes left until Tomorrowland. W1 (July 19, 2024). The event will start at ${messageTime1} CET.`;
+
+     const { days: days2, hours: hours2, minutes: minutes2 } = calculateRemainingTime(targetDateCET2);
+     const messageTime2 = targetDateCET2.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
+     const messageText2 = ` There are ${days2} days, ${hours2} hours, and ${minutes2} minutes left until Tomorrowland. W2 (July 26, 2024). The event will start at ${messageTime2} CET.`;
+
+     const combinedMessage = `${messageText1}\n${messageText2}`;
+
+     await client.sendMessage(message.from, combinedMessage);
 }
-
 
 
       

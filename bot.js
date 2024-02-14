@@ -71,8 +71,8 @@ if (message.body.match(/!countdown/gi)) {
 
      // Calculate the target date based on the current date
      const currentYear = currentDate.getFullYear();
-     const targetDate = new Date(currentYear, 7, 16, 0, 0, 0); // July 16 of the current year, at midnight
-     if (currentDate.getMonth() > 7 || (currentDate.getMonth() === 6 && currentDate.getDate() > 16)) {
+     const targetDate = new Date(currentYear, 6, 16, 0, 0, 0); // July (month 6 is July) 16 of the current year, at midnight
+     if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 16)) {
          // If the current date is after July 16, set the target date to July 16 of the next year
          targetDate.setFullYear(currentYear + 1);
      }
@@ -80,12 +80,14 @@ if (message.body.match(/!countdown/gi)) {
      console.log(`Current Date: ${currentDate.toLocaleString()} (${currentFormattedTime} GMT)`);
      console.log(`Target Date: ${targetDate.toLocaleString()} GMT`);
 
-     const { days, hours, minutes } = calculateRemainingTime(targetDate);
-     const messageTime = targetDate.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
-     const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland. The event will start at ${messageTime}.`;
+     // Convert the target date to CET
+     const targetDateCET = new Date(targetDate.toLocaleString('en-US', {timeZone: 'CET'}));
+
+     const { days, hours, minutes } = calculateRemainingTime(targetDateCET);
+     const messageTime = targetDateCET.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
+     const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland. The event will start at ${messageTime} CET.`;
      await client.sendMessage(message.from, messageText);
 }
-
 
 
 

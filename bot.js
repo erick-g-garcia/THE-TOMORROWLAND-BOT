@@ -63,7 +63,6 @@ if (message.body.match(/!countdown/gi)) {
 
 // Configure the interval to send updates to the modroom every 2 minutes
 setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
-}
 
 
 

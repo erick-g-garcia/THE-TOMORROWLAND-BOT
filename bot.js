@@ -97,7 +97,7 @@ if (message.body.match(/!countdown/gi)) {
      const messageTime2 = targetDate2.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
      const messageText2 = ` There are ${days2} days, ${hours2} hours, and ${minutes2} minutes left until Tomorrowland W2 (July 26, 2024, 5:00 PM CET).`;
 
-     const combinedMessage = `${messageText1}\n\&\n\${messageText2}`;
+     const combinedMessage = `${messageText1}\n\&\n${messageText2}`;
 
      await client.sendMessage(message.from, combinedMessage);
 }

@@ -70,14 +70,18 @@ if (message.body.match(/!groups/gi)) {
     const chats = await client.getChats();
     let groupsList = "List of Groups:\n\n";
 
-    chats.forEach(chat => {
+    chats.forEach((chat, index) => {
         if (chat.isGroup) {
-            groupsList += `${chat.name} - ${chat.id._serialized}\n`;
+            groupsList += `${chat.id._serialized}@g.us`;
+            if (index < chats.length - 1) {
+                groupsList += ", ";
+            }
         }
     });
 
     await client.sendMessage(message.from, groupsList);
 }
+
 
 
 

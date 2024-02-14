@@ -76,7 +76,7 @@ function delay(ms) {
 }
 
 // Configure the interval to send updates to the testRooms every 2 minutes
-setInterval(sendUpdateToTestRooms, 120000); // 120000 milliseconds = 2 minutes
+setInterval(sendUpdateToTestRooms, 60000); // 60000 milliseconds = 1 minute
 
 
 

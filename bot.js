@@ -92,8 +92,25 @@ if (message.body.match(/!groups/gi)) {
       
   }
 
+    Mensajes sin necesidad de mencionar
+
   if (message.body.match(/(fuck robert)/gi)) {
     message.reply('No, Fuck you');
+  }
+      
+  const birthdayMessagesSent = {};
+
+client.on('message', async (message) => {
+    if (message.body.match(/(Happy Birthday)/gi)) {
+        const currentDate = new Date().toISOString().slice(0, 10); // Obtiene la fecha actual en formato YYYY-MM-DD
+
+        if (!birthdayMessagesSent[currentDate]) {
+            await message.reply('Ohh thats right, its your birthday, I almost forgot. Happy Birthday 🎁🥳🎂!!!');
+            birthdayMessagesSent[currentDate] = true; // Marca el mensaje como enviado para este día
+        }
+    }
+});
+      
   }
   
 

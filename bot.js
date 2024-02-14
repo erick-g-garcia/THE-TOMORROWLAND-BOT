@@ -111,8 +111,6 @@ client.on('message', async (message) => {
     }
 });
       
-  }
-  
 
 
   if (message.mentionedIds.includes(config.me)) {

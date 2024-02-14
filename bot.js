@@ -64,7 +64,11 @@ client.on('message', async (message) => {
   }
 
   if (message.body.match(/!countdown/gi)) {
-     // Define the target date (example: Tomorrowland)
+     // Get the current date and time when the command is triggered
+     const currentDate = new Date();
+     console.log(`Command "!countdown" triggered at: ${currentDate.toLocaleString()}`);
+
+     // Define the target date here (replace the placeholder with your target date)
      const targetDate = new Date("2024-07-16T00:00:00Z"); // Adjust the date as necessary
      const { days, hours, minutes } = calculateRemainingTime(targetDate);
      const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;

@@ -92,7 +92,7 @@ if (message.body.match(/!groups/gi)) {
       
   }
 
-    Mensajes sin necesidad de mencionar
+    //Mensajes sin necesidad de mencionar
 
   if (message.body.match(/(fuck robert)/gi)) {
     message.reply('No, Fuck you');

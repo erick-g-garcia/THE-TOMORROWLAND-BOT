@@ -13,17 +13,23 @@ const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 // Function to calculate the number of days, hours, and minutes remaining until a specific date
 function calculateRemainingTime(targetDate) {
     const currentDate = new Date();
-    // Adjust the timezone offset to CET (Central European Time)
-    const timeZoneOffset = 60; // CET is UTC+1
-    const remainingTime = targetDate.getTime() - currentDate.getTime() + timeZoneOffset * 60 * 1000;
+    // Get the current timezone offset in minutes
+    const currentTimezoneOffset = currentDate.getTimezoneOffset();
+    // Convert the current timezone offset to milliseconds
+    const currentOffsetMilliseconds = currentTimezoneOffset * 60 * 1000;
+    // Get the timezone offset for CET (Central European Time) in minutes
+    const targetTimezoneOffset = -60; // CET is UTC+1
+    // Convert the timezone offset for CET to milliseconds
+    const targetOffsetMilliseconds = targetTimezoneOffset * 60 * 1000;
+    // Calculate the total offset for CET
+    const totalOffsetMilliseconds = targetOffsetMilliseconds - currentOffsetMilliseconds;
+    // Calculate the remaining time taking into account the timezone offset
+    const remainingTime = targetDate.getTime() - currentDate.getTime() + totalOffsetMilliseconds;
     const remainingDays = Math.floor(remainingTime / (1000 * 3600 * 24));
     const remainingHours = Math.floor((remainingTime % (1000 * 3600 * 24)) / (1000 * 3600));
     const remainingMinutes = Math.floor((remainingTime % (1000 * 3600)) / (1000 * 60));
     return { days: remainingDays, hours: remainingHours, minutes: remainingMinutes };
 }
-
-// Target date for the countdown (July 26, 2024)
-const targetDate = new Date('2024-07-26');
 
 const client = new Client({
   authStrategy: new LocalAuth(),
@@ -58,11 +64,12 @@ client.on('message', async (message) => {
   }
 
   if (message.body.match(/!countdown/gi)) {
+     // Define the target date (example: Tomorrowland)
+     const targetDate = new Date("2024-07-16T00:00:00Z"); // Adjust the date as necessary
      const { days, hours, minutes } = calculateRemainingTime(targetDate);
      const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
      await client.sendMessage(message.from, messageText);
-
-  }
+}
 
 
       

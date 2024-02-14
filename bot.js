@@ -46,68 +46,6 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
 
-// Función para enviar el mensaje de actualización a las 3:00 AM CET con intervalo de 10 segundos entre grupos
-async function sendUpdateAt3AMCETWithInterval() {
-    console.log('Sending update at 3:00 AM CET with 10-second interval...');
-
-    try {
-        const chats = await client.getChats();
-        console.log('Number of chats:', chats.length);
-
-        // Obtener el mensaje de actualización
-        const { days, hours, minutes } = calculateRemainingTime(targetDate);
-        const messageText = `Update: ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
-
-        // Iterar sobre cada chat y enviar el mensaje de actualización con un intervalo de 10 segundos entre grupos
-        for (let i = 0; i < chats.length; i++) {
-            const chat = chats[i];
-            if (chat.isGroup) {
-                console.log('Sending update to group:', chat.name || 'Unnamed group');
-                await client.sendMessage(chat.id._serialized, messageText);
-                await delay(10000); // Esperar 10 segundos antes de enviar el siguiente mensaje
-            }
-        }
-
-        console.log('Update sent at 3:00 AM CET with 10-second interval.');
-    } catch (error) {
-        console.error('Error sending update at 3:00 AM CET with 10-second interval:', error);
-    }
-}
-
-// Función para obtener la hora actual en CET
-function getCurrentTimeCET() {
-    const currentTime = new Date();
-    const utcOffset = currentTime.getTimezoneOffset();
-    const cetOffset = -60; // CET está 1 hora por delante de UTC
-    const cetTime = new Date(currentTime.getTime() + (utcOffset + cetOffset) * 60000);
-    return cetTime;
-}
-
-// Función para calcular el tiempo hasta las 3:00 AM CET
-function getTimeUntil3AMCET() {
-    const currentTimeCET = getCurrentTimeCET();
-    const time3AMCET = new Date(currentTimeCET);
-    time3AMCET.setHours(3, 0, 0, 0); // Establecer 3:00 AM CET
-    if (time3AMCET <= currentTimeCET) {
-        // Si ya ha pasado las 3:00 AM CET hoy, establecer para mañana
-        time3AMCET.setDate(time3AMCET.getDate() + 1);
-    }
-    const timeUntil3AMCET = time3AMCET.getTime() - currentTimeCET.getTime();
-    return timeUntil3AMCET;
-}
-
-// Obtener el tiempo hasta las 3:00 AM CET
-const timeUntil3AMCET = getTimeUntil3AMCET();
-
-// Establecer el temporizador para ejecutar la función a las 3:00 AM CET
-setTimeout(sendUpdateAt3AMCETWithInterval, timeUntil3AMCET);
-
-// Función de retardo (delay) para esperar los 10 segundos entre grupos
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
   if (message.body.match(/(!test)/gi) && isVip) {
     message.reply('Up and working Boss 🤖');
       
@@ -118,6 +56,13 @@ function delay(ms) {
   if (message.body.match(/(fuck robert)/gi)) {
     message.reply('No, Fuck you');
   }
+
+  if (message.body.match(/!countdown/gi)) {
+     const { days, hours, minutes } = calculateRemainingTime(targetDate);
+     const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
+     await client.sendMessage(message.from, messageText);
+
+
       
 
     

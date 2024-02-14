@@ -58,24 +58,30 @@ function calculateRemainingTime(targetDate) {
 
 // Function to send the message to all groups the bot is a member of
 async function sendUpdateToAllGroups() {
+    console.log('Sending update to all groups...');
+    
     const { days, hours, minutes } = calculateRemainingTime(targetDate);
     const messageText = `Update: ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
 
     // Get all the groups the bot is a member of
     const groups = await client.getChats();
 
+    console.log('Groups:', groups);
+
     // Iterate over each group and send the update message
     for (const group of groups) {
         if (group.isGroup) {
             await client.sendMessage(group.id._serialized, messageText);
+            console.log('Message sent to group:', group.name || group.id._serialized);
         }
     }
 
     console.log('Message sent to all groups at:', new Date());
 }
 
-// Configure the interval to send updates to all groups every 10 minutes
-setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
+// Configure the interval to send updates to all groups every 1 minute
+setInterval(sendUpdateToAllGroups, 60000); // 60000 milliseconds = 1 minute
+
 
 
     // Command logic for !countdown

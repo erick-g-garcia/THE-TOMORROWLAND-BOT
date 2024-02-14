@@ -46,7 +46,17 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
   
-   // Function to send the message to the modroom
+// Function to calculate the remaining time until Tomorrowland
+function calculateRemainingTime(targetDate) {
+    const currentDate = new Date();
+    const remainingTime = targetDate.getTime() - currentDate.getTime();
+    const remainingDays = Math.floor(remainingTime / (1000 * 3600 * 24));
+    const remainingHours = Math.floor((remainingTime % (1000 * 3600 * 24)) / (1000 * 3600));
+    const remainingMinutes = Math.floor((remainingTime % (1000 * 3600)) / (1000 * 60));
+    return { days: remainingDays, hours: remainingHours, minutes: remainingMinutes };
+}
+
+// Function to send the message to the modroom
 async function sendUpdateToModRoom() {
     const { days, hours, minutes } = calculateRemainingTime(targetDate);
     const messageText = `Update: ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
@@ -56,6 +66,7 @@ async function sendUpdateToModRoom() {
 
 // Configure the interval to send updates to the modroom every 2 minutes
 setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
+
 
     // Command logic for !countdown
 if (message.body.match(/!countdown/gi)) {

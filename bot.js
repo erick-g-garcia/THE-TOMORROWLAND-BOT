@@ -54,15 +54,15 @@ async function sendUpdateToModRoom() {
     console.log('Message sent to modroom at:', new Date());
 }
 
-// Command logic for !countdown
+// Configure the interval to send updates to the modroom every 2 minutes
+setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
+
+    // Command logic for !countdown
 if (message.body.match(/!countdown/gi)) {
     const { days, hours, minutes } = calculateRemainingTime(targetDate);
     const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
     await client.sendMessage(message.from, messageText);
 }
-
-// Configure the interval to send updates to the modroom every 2 minutes
-setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
 
 
 

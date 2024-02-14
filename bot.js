@@ -10,20 +10,13 @@ import { spawn } from 'child_process';
 import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
-// Function to calculate the number of days, hours, and minutes remaining until a specific date
 function calculateRemainingTime(targetDate) {
     const currentDate = new Date();
-    // Get the current timezone offset in minutes
     const currentTimezoneOffset = currentDate.getTimezoneOffset();
-    // Convert the current timezone offset to milliseconds
     const currentOffsetMilliseconds = currentTimezoneOffset * 60 * 1000;
-    // Get the timezone offset for CET (Central European Time) in minutes
     const targetTimezoneOffset = -60; // CET is UTC+1
-    // Convert the timezone offset for CET to milliseconds
     const targetOffsetMilliseconds = targetTimezoneOffset * 60 * 1000;
-    // Calculate the total offset for CET
     const totalOffsetMilliseconds = targetOffsetMilliseconds - currentOffsetMilliseconds;
-    // Calculate the remaining time taking into account the timezone offset
     const remainingTime = targetDate.getTime() - currentDate.getTime() + totalOffsetMilliseconds;
     const remainingDays = Math.floor(remainingTime / (1000 * 3600 * 24));
     const remainingHours = Math.floor((remainingTime % (1000 * 3600 * 24)) / (1000 * 3600));
@@ -69,18 +62,15 @@ if (message.body.match(/!countdown/gi)) {
      const currentFormattedTime = currentDate.toLocaleString('en-US', { timeZone: 'CET', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false });
      console.log(`Command "!countdown" triggered at: ${currentDate.toLocaleString()} (${currentFormattedTime} CET)`);
 
-     // Calculate the target dates based on the current date
      const currentYear = currentDate.getFullYear();
      const targetDate1 = new Date(Date.UTC(currentYear, 6, 19, 15, 0, 0)); // July 19 of the current year, at 17:00 (5:00 PM) CET
      const targetDate2 = new Date(Date.UTC(currentYear, 6, 26, 15, 0, 0)); // July 26 of the current year, at 17:00 (5:00 PM) CET
 
      if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 19)) {
-         // If the current date is after July 19, set the target date1 to July 19 of the next year
          targetDate1.setUTCFullYear(currentYear + 1);
      }
 
      if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 26)) {
-         // If the current date is after July 26, set the target date2 to July 26 of the next year
          targetDate2.setUTCFullYear(currentYear + 1);
      }
 
@@ -102,7 +92,7 @@ if (message.body.match(/!countdown/gi)) {
      await client.sendMessage(message.from, combinedMessage);
 }
      
-
+   //Mensajes que necesitan mencionc
     
   if (message.mentionedIds.includes(config.me)) {
     

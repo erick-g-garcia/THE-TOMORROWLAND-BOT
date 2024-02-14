@@ -56,18 +56,15 @@ function calculateRemainingTime(targetDate) {
     return { days: remainingDays, hours: remainingHours, minutes: remainingMinutes };
 }
 
-
-
-
-async function sendUpdateToRooms() {
-    const rooms = config.testrooms; // Obtener la lista de rooms desde config.js
+async function sendUpdateToTestRooms() {
+    const testRooms = config.testRooms; // Obtener la lista de testRooms desde config.js
     const { days, hours, minutes } = calculateRemainingTime(targetDate);
     const messageText = `Update: ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
     
-    for (const room of testrooms) {
-        await client.sendMessage(room, messageText); // Enviar mensaje al room
-        console.log(`Message sent to testroom ${room} at:`, new Date());
-        if (rooms.indexOf(room) < rooms.length - 1) {
+    for (const room of testRooms) {
+        await client.sendMessage(room, messageText); // Enviar mensaje al testRoom
+        console.log(`Message sent to testRoom ${room} at:`, new Date());
+        if (testRooms.indexOf(room) < testRooms.length - 1) {
             await delay(10000); // Esperar 10 segundos solo si no es el último grupo
         }
     }
@@ -78,8 +75,8 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Configure the interval to send updates to the rooms every 2 minutes
-setInterval(sendUpdateToRooms, 120000); // 120000 milliseconds = 2 minutes
+// Configure the interval to send updates to the testRooms every 2 minutes
+setInterval(sendUpdateToTestRooms, 120000); // 120000 milliseconds = 2 minutes
 
 
 

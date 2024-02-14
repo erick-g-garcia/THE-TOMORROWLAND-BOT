@@ -90,14 +90,14 @@ if (message.body.match(/!countdown/gi)) {
 
      const { days: days1, hours: hours1, minutes: minutes1 } = calculateRemainingTime(targetDate1);
      const messageTime1 = targetDate1.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
-     const messageText1 = `There are ${days1} days, ${hours1} hours, and ${minutes1} minutes left until Tomorrowland. W1 (July 19, 2024, 5:00 PM CET).`;
+     const messageText1 = `There are ${days1} days, ${hours1} hours, and ${minutes1} minutes left until Tomorrowland W1 (July 19, 2024, 5:00 PM CET).`;
 
 
      const { days: days2, hours: hours2, minutes: minutes2 } = calculateRemainingTime(targetDate2);
      const messageTime2 = targetDate2.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
-     const messageText2 = ` There are ${days2} days, ${hours2} hours, and ${minutes2} minutes left until Tomorrowland. W2 (July 26, 2024, 5:00 PM CET).`;
+     const messageText2 = ` There are ${days2} days, ${hours2} hours, and ${minutes2} minutes left until Tomorrowland W2 (July 26, 2024, 5:00 PM CET).`;
 
-     const combinedMessage = `${messageText1}\n\n\n${messageText2}`;
+     const combinedMessage = `${messageText1}\n\&\n\n${messageText2}`;
 
      await client.sendMessage(message.from, combinedMessage);
 }

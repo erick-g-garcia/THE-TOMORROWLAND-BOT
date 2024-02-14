@@ -83,7 +83,15 @@ if (message.body.match(/!groups/gi)) {
 }
 
 
+async function sendUpdateToModRoom() {
+    const { days, hours, minutes } = calculateRemainingTime(targetDate);
+    const messageText = `Update: ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
+    await client.sendMessage(config.modRoom, messageText);
+    console.log('Message sent to modroom at:', new Date());
+}
 
+// Configure the interval to send updates to the modroom every 2 minutes
+setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
 
 
 
@@ -98,21 +106,8 @@ if (message.body.match(/!groups/gi)) {
     message.reply('No, Fuck you');
   }
       
-  const birthdayMessagesSent = {};
 
-client.on('message', async (message) => {
-    if (message.body.match(/(Happy Birthday)/gi)) {
-        const currentDate = new Date().toISOString().slice(0, 10); // Obtiene la fecha actual en formato YYYY-MM-DD
-
-        if (!birthdayMessagesSent[currentDate]) {
-            await message.reply('Ohh thats right, its your birthday, I almost forgot. Happy Birthday 🎁🥳🎂!!!');
-            birthdayMessagesSent[currentDate] = true; // Marca el mensaje como enviado para este día
-        }
-    }
-});
-      
-
-
+    
   if (message.mentionedIds.includes(config.me)) {
     
     if (message.body.match(/(hello)/gi)) {

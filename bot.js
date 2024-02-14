@@ -46,15 +46,25 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
   
-   if (message.body.match(/!countdown/gi)) {
-        const { days, hours, minutes } = calculateRemainingTime(targetDate);
-        const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
-        await client.sendMessage(message.from, messageText);
-        // Enviar el sticker usando la media key
-        const stickerMediaKey = 'R5ihOBLbbaKJF4wikgExBkoIgZ4hKEQz8Y2kTLV/4wg=';
-        const sticker = new MessageMedia('image/png', stickerMediaKey);
-        await client.sendMessage(message.from, sticker, { sendMediaAsSticker: true });
-    }
+   // Function to send the message to the modroom
+async function sendUpdateToModRoom() {
+    const { days, hours, minutes } = calculateRemainingTime(targetDate);
+    const messageText = `Update: ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
+    await client.sendMessage(config.modRoom, messageText);
+    console.log('Message sent to modroom at:', new Date());
+}
+
+// Command logic for !countdown
+if (message.body.match(/!countdown/gi)) {
+    const { days, hours, minutes } = calculateRemainingTime(targetDate);
+    const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
+    await client.sendMessage(message.from, messageText);
+}
+
+// Configure the interval to send updates to the modroom every 2 minutes
+setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
+}
+
 
 
 

@@ -63,28 +63,29 @@ client.on('message', async (message) => {
     message.reply('No, Fuck you');
   }
 
- if (message.body.match(/!countdown/gi)) {
+if (message.body.match(/!countdown/gi)) {
      // Get the current date and time when the command is triggered
      const currentDate = new Date();
-     const currentFormattedTime = currentDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true });
-     console.log(`Command "!countdown" triggered at: ${currentDate.toLocaleString()} (${currentFormattedTime})`);
+     const currentFormattedTime = currentDate.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false });
+     console.log(`Command "!countdown" triggered at: ${currentDate.toLocaleString()} (${currentFormattedTime} GMT)`);
 
      // Calculate the target date based on the current date
      const currentYear = currentDate.getFullYear();
-     const targetDate = new Date(currentYear, 6, 16, 0, 0, 0); // July 16 of the current year, at midnight
-     if (currentDate.getMonth() > 6 || (currentDate.getMonth() === 6 && currentDate.getDate() > 16)) {
+     const targetDate = new Date(currentYear, 7, 16, 0, 0, 0); // July 16 of the current year, at midnight
+     if (currentDate.getMonth() > 7 || (currentDate.getMonth() === 6 && currentDate.getDate() > 16)) {
          // If the current date is after July 16, set the target date to July 16 of the next year
          targetDate.setFullYear(currentYear + 1);
      }
 
-     console.log(`Current Date: ${currentDate.toLocaleString()} (${currentFormattedTime})`);
-     console.log(`Target Date: ${targetDate.toLocaleString()}`);
+     console.log(`Current Date: ${currentDate.toLocaleString()} (${currentFormattedTime} GMT)`);
+     console.log(`Target Date: ${targetDate.toLocaleString()} GMT`);
 
      const { days, hours, minutes } = calculateRemainingTime(targetDate);
-     const messageTime = targetDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+     const messageTime = targetDate.toLocaleString('en-US', { timeZoneName: 'short', hour: 'numeric', minute: 'numeric', hour12: true });
      const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland. The event will start at ${messageTime}.`;
      await client.sendMessage(message.from, messageText);
 }
+
 
 
 

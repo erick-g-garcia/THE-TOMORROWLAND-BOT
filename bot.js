@@ -59,39 +59,28 @@ function calculateRemainingTime(targetDate) {
 
 
 
-    // Command logic for !countdown
-if (message.body.match(/!countdown/gi)) {
-    const { days, hours, minutes } = calculateRemainingTime(targetDate);
-    const messageText = `Hello! There are ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
-    await client.sendMessage(message.from, messageText);
-}
-    // Comando para obtener la lista de todos los grupos
-if (message.body.match(/!groups/gi)) {
-    const chats = await client.getChats();
-    let groupsList = "List of Groups:\n\n";
-
-    chats.forEach((chat, index) => {
-        if (chat.isGroup) {
-            groupsList += `${chat.id._serialized}@g.us`;
-            if (index < chats.length - 1) {
-                groupsList += ", ";
-            }
-        }
-    });
-
-    await client.sendMessage(message.from, groupsList);
-}
-
-
-async function sendUpdateToModRoom() {
+async function sendUpdateToRooms() {
+    const rooms = config.testrooms; // Obtener la lista de rooms desde config.js
     const { days, hours, minutes } = calculateRemainingTime(targetDate);
     const messageText = `Update: ${days} days, ${hours} hours, and ${minutes} minutes left until Tomorrowland.`;
-    await client.sendMessage(config.modRoom, messageText);
-    console.log('Message sent to modroom at:', new Date());
+    
+    for (const room of testrooms) {
+        await client.sendMessage(room, messageText); // Enviar mensaje al room
+        console.log(`Message sent to testroom ${room} at:`, new Date());
+        if (rooms.indexOf(room) < rooms.length - 1) {
+            await delay(10000); // Esperar 10 segundos solo si no es el último grupo
+        }
+    }
 }
 
-// Configure the interval to send updates to the modroom every 2 minutes
-setInterval(sendUpdateToModRoom, 120000); // 120000 milliseconds = 2 minutes
+// Función para esperar un intervalo de tiempo dado en milisegundos
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Configure the interval to send updates to the rooms every 2 minutes
+setInterval(sendUpdateToRooms, 120000); // 120000 milliseconds = 2 minutes
+
 
 
 

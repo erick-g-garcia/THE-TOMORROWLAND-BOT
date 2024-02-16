@@ -108,8 +108,6 @@ client.on('message', async (message) => {
   }
  
 
-
-
 //Test y pruebas
 
   if (message.body.match(/(!test)/gi) && isVip) {
@@ -122,6 +120,8 @@ client.on('message', async (message) => {
   if (message.body.match(/(fuck robert)/gi)) {
     message.reply('No, Fuck you');
   }
+
+     //Countdown command
 
 if (message.body.match(/!countdown/gi)) {
      // Get the current date and time when the command is triggered

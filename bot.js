@@ -43,14 +43,13 @@ client.on('message', async (message) => {
 
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
-
- // Verificar si el mensaje es el comando !report
+// Verificar si el mensaje es el comando !report
   if (message.body === '!report') {
     // Función para enviar el informe al modroom
     async function sendReport() {
       let map = {};
       const chats = await client.getChats();
-      let groupsChecked = [];
+      let groupsChecked = {};
 
       // Bucle para encontrar comunidades
       for (const chat of chats) {
@@ -60,6 +59,7 @@ client.on('message', async (message) => {
           map[groupId] = {
             name: chat.name,
             members: [],
+            checkedGroups: [],
           };
 
           for (const participant of chat.participants) {
@@ -99,21 +99,22 @@ client.on('message', async (message) => {
           await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
         }
 
-        groupsChecked.push(community.name); // Agregar el nombre del grupo a la lista de grupos revisados
+        groupsChecked[community.name] = community.checkedGroups.join(', '); // Agregar el nombre del grupo a la lista de grupos revisados
       }
 
-      // Enviar un mensaje con la lista de grupos revisados
-      const groupsCheckedMessage = `Los siguientes grupos fueron revisados y comparados con el canal de anuncios: ${groupsChecked.join(', ')}`;
-      await client.sendMessage((config.modRoom), groupsCheckedMessage); // Reemplazar <modroom-number> con el número del modroom
-
-      return groupsChecked; // Devolver la lista de grupos revisados
+      // Enviar un mensaje con la lista de grupos revisados por comunidad
+      let communitiesCheckedMessage = '';
+      for (const communityName in groupsChecked) {
+        communitiesCheckedMessage += `${communityName}: ${groupsChecked[communityName]}\n`;
+      }
+      await client.sendMessage((config.modRoom), communitiesCheckedMessage); // Reemplazar <modroom-number> con el número del modroom
     }
 
     // Llamar a la función para enviar el informe
     await sendReport();
   }
-
     
+
 //Pruebas y test
 
   if (message.body.match(/(!test)/gi) && isVip) {

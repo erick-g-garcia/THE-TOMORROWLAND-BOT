@@ -50,66 +50,55 @@ client.on('message', async (message) => {
 
 // Función para enviar el informe al modroom
 async function sendReport() {
-    let map = {};
-    const chats = await client.getChats();
-    let groupsChecked = [];
+    const communities = await client.getChats();
+    
+    for (const community of communities) {
+        if (community.groupMetadata && community.groupMetadata.isParentGroup) {
+            const groupId = community.id._serialized;
+            const groupName = community.name;
+            const map = {};
 
-    // Bucle para encontrar comunidades
-    for (const chat of chats) {
-        if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-            let groupId = chat.id._serialized;
-
+            // Obtenemos los miembros de la comunidad actual
             map[groupId] = {
-                name: chat.name,
+                name: groupName,
                 members: [],
             };
 
-            for (const participant of chat.participants) {
+            for (const participant of community.participants) {
                 map[groupId]['members'].push(participant.id._serialized);
             }
-        }
-    }
 
-    // Bucle para encontrar anuncios
-    for (const chat of chats) {
-        if (chat.groupMetadata && chat.groupMetadata.announce) {
-            let groupId = chat.id._serialized;
-            let parentId = chat.groupMetadata.parentGroup._serialized;
+            // Buscamos el chat de anuncios de la comunidad actual
+            let announcementsChat;
+            for (const chat of communities) {
+                if (chat.groupMetadata && chat.groupMetadata.announce && chat.groupMetadata.parentGroup._serialized === groupId) {
+                    announcementsChat = chat;
+                    break;
+                }
+            }
 
-            if (!map[parentId]) {
+            if (!announcementsChat) {
+                console.log(`No se encontró un chat de anuncios para la comunidad ${groupName}`);
                 continue;
             }
 
-            map[parentId]['inAnnouncements'] = [];
+            map[groupId]['inAnnouncements'] = [];
+            for (const participant of announcementsChat.participants) {
+                map[groupId]['inAnnouncements'].push(participant.id._serialized);
+            }
 
-            for (const participant of chat.participants) {
-                map[parentId]['inAnnouncements'].push(participant.id._serialized);
+            console.log(`Comparando los grupos de la comunidad ${groupName} con el chat de anuncios de la misma`);
+
+            const difference = map[groupId].members.filter((member) => !map[groupId].inAnnouncements.includes(member));
+
+            if (difference.length > 0) {
+                const message = `Los siguientes miembros no están en el grupo de anuncios de la comunidad ${groupName}: ${difference.join(', ')}`;
+                await client.sendMessage((config.modRoom), message);
             }
         }
     }
-
-    // Comparar miembros y miembros en anuncios y enviar el informe al modroom
-    for (const communityId in map) {
-        const community = map[communityId];
-        console.log(community.name);
-
-        const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
-        console.log('Difference: ', difference);
-
-        if (difference.length > 0) {
-            const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
-            await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
-        }
-
-        groupsChecked.push(community.name); // Agregar el nombre del grupo a la lista de grupos revisados
-    }
-
-    // Enviar un mensaje con la lista de grupos revisados
-    const groupsCheckedMessage = `Los siguientes grupos fueron revisados y comparados con el canal de anuncios: ${groupsChecked.join(', ')}`;
-    await client.sendMessage((config.modRoom), groupsCheckedMessage); // Reemplazar <modroom-number> con el número del modroom
-
-    return groupsChecked; // Devolver la lista de grupos revisados
 }
+
 
  
 

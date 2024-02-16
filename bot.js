@@ -45,13 +45,14 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
 
-     // Verificar si el mensaje es el comando !report
+   // Verificar si el mensaje es el comando !report
   if (message.body === '!report') {
     // Función para enviar el informe al modroom
     async function sendReport() {
       let map = {};
       const chats = await client.getChats();
       let groupsChecked = {};
+      let allGroups = [];
 
       // Bucle para encontrar comunidades
       for (const chat of chats) {
@@ -72,6 +73,7 @@ client.on('message', async (message) => {
           for (const subChat of chats) {
             if (subChat.groupMetadata && subChat.groupMetadata.isSubGroup && subChat.groupMetadata.parentGroup.id._serialized === groupId) {
               map[groupId].checkedGroups.push(subChat.name);
+              allGroups.push(subChat.name); // Agregar el grupo a la lista de todos los grupos
             }
           }
         }
@@ -111,12 +113,9 @@ client.on('message', async (message) => {
         groupsChecked[community.name] = community.checkedGroups.join(', '); // Agregar el nombre del grupo a la lista de grupos revisados
       }
 
-      // Enviar un mensaje con la lista de grupos revisados por comunidad
-      let communitiesCheckedMessage = '';
-      for (const communityName in groupsChecked) {
-        communitiesCheckedMessage += `${communityName}: ${groupsChecked[communityName]}\n`;
-      }
-      await client.sendMessage((config.modRoom), communitiesCheckedMessage); // Reemplazar <modroom-number> con el número del modroom
+      // Enviar un mensaje con la lista de todos los grupos revisados
+      let allGroupsMessage = `Lista de todos los grupos revisados: ${allGroups.join(', ')}`;
+      await client.sendMessage((config.modRoom), allGroupsMessage); // Reemplazar <modroom-number> con el número del modroom
     }
 
     // Llamar a la función para enviar el informe

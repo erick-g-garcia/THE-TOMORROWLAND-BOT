@@ -100,7 +100,7 @@ client.on('message', async (message) => {
             }
 
             // Enviar el mensaje al modroom
-            await client.sendMessage(config.modRoom, messageContent);
+            await client.sendMessage((config.modRoom), messageContent);
         }
 
         // Llamar a la función para enviar el informe

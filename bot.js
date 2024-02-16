@@ -44,73 +44,64 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-// Manejo del evento de mensaje
-client.on('message', async (message) => {
-    console.log('Received message:', message);
+    
+if (message.body === '!report') {
+    async function sendReport() {
+      let map = {};
 
-    // Verificar si el mensaje es el comando !report
-    if (message.body === '!report') {
-        // Función para enviar el informe al modroom
-        async function sendReport() {
-            let map = {};
+      const chats = await client.getChats();
 
-            // Obtener todos los chats
-            const chats = await client.getChats();
+      for (const chat of chats) {
+        if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
+          let groupId = chat.id._serialized;
 
-            // Loop sobre todos los chats para encontrar comunidades y chats de anuncios
-            for (const chat of chats) {
-                // Si es una comunidad, guardar la información
-                if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-                    let groupId = chat.id._serialized;
+          map[groupId] = {
+            name: chat.name,
+            members: [],
+          };
 
-                    map[groupId] = {
-                        name: chat.name,
-                        members: [],
-                    };
-
-                    for (const participant of chat.participants) {
-                        map[groupId]['members'].push(participant.id._serialized);
-                    }
-                }
-
-                // Si es un chat de anuncios, guardar la información
-                if (chat.groupMetadata && chat.groupMetadata.announce) {
-                    let groupId = chat.id._serialized;
-                    let parentId = chat.groupMetadata.parentGroup._serialized;
-
-                    if (!map[parentId]) {
-                        continue;
-                    }
-
-                    map[parentId]['inAnnouncements'] = [];
-
-                    for (const participant of chat.participants) {
-                        map[parentId]['inAnnouncements'].push(participant.id._serialized);
-                    }
-                }
-            }
-
-            // Construir el mensaje con la información recolectada
-            let messageContent = '';
-            for (const communityId in map) {
-                const community = map[communityId];
-                messageContent += `Community: ${community.name}\n`;
-                const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
-                if (difference.length > 0) {
-                    messageContent += `These members are not in the announcements chat: ${difference.join(', ')}\n\n`;
-                } else {
-                    messageContent += 'All members are in the announcements chat.\n\n';
-                }
-            }
-
-             // Enviar el mensaje al modroom
-            await client.sendMessage(config.modRoom, messageContent);
+          for (const participant of chat.participants) {
+            map[groupId]['members'].push(participant.id._serialized);
+          }
         }
 
-        // Llamar a la función para enviar el informe
-        await sendReport(); // Aquí resolví el problema al llamar la función para enviar el informe al modroom.
+        if (chat.groupMetadata && chat.groupMetadata.announce) {
+          let groupId = chat.id._serialized;
+          let parentId = chat.groupMetadata.parentGroup._serialized;
+
+          if (!map[parentId]) {
+            continue;
+          }
+
+          map[parentId]['inAnnouncements'] = [];
+
+          for (const participant of chat.participants) {
+            map[parentId]['inAnnouncements'].push(participant.id._serialized);
+          }
+        }
+      }
+
+      let messageContent = '';
+      for (const communityId in map) {
+        const community = map[communityId];
+        messageContent += `Community: ${community.name}\n`;
+        const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
+        if (difference.length > 0) {
+          messageContent += `These members are not in the announcements chat: ${difference.join(', ')}\n\n`;
+        } else {
+          messageContent += 'All members are in the announcements chat.\n\n';
+        }
+      }
+
+      await client.sendMessage(config.modRoom, messageContent);
     }
-    });
+
+    await sendReport();
+  }
+
+  // Otras lógicas de manejo de mensajes aquí...
+});
+
 
 
     

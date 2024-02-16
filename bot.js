@@ -99,8 +99,7 @@ if (message.body === '!report') {
     await sendReport();
   }
 
-  // Otras lógicas de manejo de mensajes aquí...
-});
+  
 
 
 

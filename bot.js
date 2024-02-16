@@ -44,10 +44,11 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-  // Función para enviar el informe al modroom
-  async function sendReport() {
+// Función para enviar el informe al modroom
+async function sendReport() {
     let map = {};
     const chats = await client.getChats();
+    let checkedGroups = [];
 
     // Bucle para encontrar comunidades
     for (const chat of chats) {
@@ -80,8 +81,17 @@ client.on('message', async (message) => {
             for (const participant of chat.participants) {
                 map[parentId]['inAnnouncements'].push(participant.id._serialized);
             }
+
+            // Agregamos el nombre del grupo verificado a la lista
+            checkedGroups.push(map[parentId].name);
         }
     }
+
+    // Construimos el mensaje con la lista de grupos verificados y comparamos con el chat de anuncios
+    let message = `Los siguientes grupos fueron revisados y comparados con el chat de anuncios:\n`;
+    checkedGroups.forEach(group => {
+        message += `${group}\n`;
+    });
 
     // Comparar miembros y miembros en anuncios y enviar el informe al modroom
     for (const communityId in map) {
@@ -92,16 +102,23 @@ client.on('message', async (message) => {
         console.log('Difference: ', difference);
 
         if (difference.length > 0) {
-            const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
-            await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
+            message += `\nLos siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
         }
     }
-  }
 
-  // Aquí verificamos el mensaje y llamamos a la función sendReport() si el mensaje es '!report'
-  if (message.body === '!report') {
-      await sendReport();
-  }
+    // Enviamos el mensaje al modroom
+    await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
+}
+
+// Manejo del evento de mensaje
+client.on('message', async (message) => {
+    console.log('Received message:', message);
+
+    if (message.body === '!report') {
+        await sendReport();
+    }
+});
+
 
     
 //Pruebas y test

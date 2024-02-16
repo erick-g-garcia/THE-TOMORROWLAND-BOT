@@ -44,71 +44,19 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-// Función para enviar el informe al modroom
-async function sendReport() {
-    const tomorrowlandW2Chats = await client.getChats().filter(chat => chat.name === 'Tomorrowland Community W2');
+    
 
-    if (tomorrowlandW2Chats.length === 0) {
-        console.log("No se encontraron chats para Tomorrowland Community W2");
-        return;
-    }
+    
+//Pruebas y test
 
-    const tomorrowlandW2Community = tomorrowlandW2Chats[0];
-    const groupId = tomorrowlandW2Community.id._serialized;
-    const groupName = tomorrowlandW2Community.name;
-    const map = {};
+  if (message.body.match(/(!test)/gi) && isVip) {
+    message.reply('Up and working Boss 🤖');
+      
+  }
 
-    // Obtenemos los miembros de la comunidad Tomorrowland W2
-    map[groupId] = {
-        name: groupName,
-        members: [],
-    };
-
-    for (const participant of tomorrowlandW2Community.participants) {
-        map[groupId]['members'].push(participant.id._serialized);
-    }
-
-    // Buscamos el chat de anuncios de la comunidad Tomorrowland W2
-    let announcementsChat;
-    for (const chat of tomorrowlandW2Chats) {
-        if (chat.groupMetadata && chat.groupMetadata.announce && chat.groupMetadata.parentGroup._serialized === groupId) {
-            announcementsChat = chat;
-            break;
-        }
-    }
-
-    if (!announcementsChat) {
-        console.log(`No se encontró un chat de anuncios para la comunidad ${groupName}`);
-        return;
-    }
-
-    map[groupId]['inAnnouncements'] = [];
-    for (const participant of announcementsChat.participants) {
-        map[groupId]['inAnnouncements'].push(participant.id._serialized);
-    }
-
-    console.log(`Comparando los grupos de la comunidad ${groupName} con el chat de anuncios de la misma`);
-
-    const difference = map[groupId].members.filter((member) => !map[groupId].inAnnouncements.includes(member));
-
-    if (difference.length > 0) {
-        const message = `Los siguientes miembros no están en el grupo de anuncios de la comunidad ${groupName}: ${difference.join(', ')}`;
-        await client.sendMessage((config.modRoom), message);
-    }
-}
-
-// Manejo del evento de mensaje
-client.on('message', async (message) => {
-    console.log('Received message:', message);
-
-    const author = message.author || message.from;
-    const isVip = config.vips.includes(author);
-
-    if (message.body === '!report' && isVip) {
-        await sendReport();
-    }
-});
-   
+  if (message.body.match(/(fuck robert)/gi)) {
+    message.reply('No, Fuck you');
+  }
 
      //Countdown command
 

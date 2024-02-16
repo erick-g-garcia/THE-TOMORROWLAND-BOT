@@ -44,14 +44,18 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-    
-if (message.body === '!report') {
+    // Verificar si el mensaje es el comando !report
+  if (message.body === '!report') {
+    // Función para enviar el informe al modroom
     async function sendReport() {
       let map = {};
 
+      // Obtener todos los chats
       const chats = await client.getChats();
 
+      // Loop sobre todos los chats para encontrar comunidades y chats de anuncios
       for (const chat of chats) {
+        // Si es una comunidad, guardar la información
         if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
           let groupId = chat.id._serialized;
 
@@ -65,22 +69,29 @@ if (message.body === '!report') {
           }
         }
 
+        // Si es un chat de anuncios, guardar la información
         if (chat.groupMetadata && chat.groupMetadata.announce) {
           let groupId = chat.id._serialized;
           let parentId = chat.groupMetadata.parentGroup._serialized;
 
           if (!map[parentId]) {
-            continue;
+            // Si no se ha inicializado el objeto para esta comunidad,
+            // inicialízalo aquí
+            map[parentId] = {
+              name: parentId, // Puedes usar el ID serializado como nombre por ahora
+              members: [], // Inicializa members como un array vacío
+              inAnnouncements: [], // Inicializa inAnnouncements como un array vacío
+            };
           }
 
-          map[parentId]['inAnnouncements'] = [];
-
+          // Guarda los participantes del chat de anuncios en inAnnouncements
           for (const participant of chat.participants) {
             map[parentId]['inAnnouncements'].push(participant.id._serialized);
           }
         }
       }
 
+      // Construir el mensaje con la información recolectada
       let messageContent = '';
       for (const communityId in map) {
         const community = map[communityId];
@@ -93,15 +104,13 @@ if (message.body === '!report') {
         }
       }
 
+      // Enviar el mensaje al modroom
       await client.sendMessage(config.modRoom, messageContent);
     }
 
+    // Llamar a la función para enviar el informe
     await sendReport();
   }
-
-  
-
-
 
     
 //Pruebas y test

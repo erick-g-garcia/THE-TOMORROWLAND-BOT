@@ -44,7 +44,8 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-    // Verificar si el mensaje es el comando !report
+
+// Verificar si el mensaje es el comando !report
   if (message.body === '!report') {
     // Función para enviar el informe al modroom
     async function sendReport() {
@@ -111,6 +112,7 @@ client.on('message', async (message) => {
     // Llamar a la función para enviar el informe
     await sendReport();
   }
+
 
     
 //Pruebas y test

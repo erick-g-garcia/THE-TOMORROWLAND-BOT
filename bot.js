@@ -113,7 +113,6 @@ client.on('message', async (message) => {
     await sendReport();
   }
 
-
     
 //Pruebas y test
 

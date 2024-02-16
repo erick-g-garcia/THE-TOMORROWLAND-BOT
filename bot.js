@@ -96,7 +96,7 @@ async function sendReport() {
     message.reply('No, Fuck you');
   }
   
-
+//Mensajes que necesitan mencion
 
   if (message.mentionedIds.includes(config.me)) {
     

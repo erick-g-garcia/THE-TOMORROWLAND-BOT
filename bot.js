@@ -47,7 +47,6 @@ client.on('message', async (message) => {
  if (msg.body === '!report') {
         await sendReport();
     }
-});
 
 // Función para enviar el informe al modroom
 async function sendReport() {

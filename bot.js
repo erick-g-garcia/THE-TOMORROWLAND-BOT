@@ -44,48 +44,50 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
+ // Verificar si el mensaje es el comando !report
+  if (message.body === '!report') {
     // Función para enviar el informe al modroom
-async function sendReport() {
-    let map = {};
-    const chats = await client.getChats();
-    let groupsChecked = [];
+    async function sendReport() {
+      let map = {};
+      const chats = await client.getChats();
+      let groupsChecked = [];
 
-    // Bucle para encontrar comunidades
-    for (const chat of chats) {
+      // Bucle para encontrar comunidades
+      for (const chat of chats) {
         if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-            let groupId = chat.id._serialized;
+          let groupId = chat.id._serialized;
 
-            map[groupId] = {
-                name: chat.name,
-                members: [],
-            };
+          map[groupId] = {
+            name: chat.name,
+            members: [],
+          };
 
-            for (const participant of chat.participants) {
-                map[groupId]['members'].push(participant.id._serialized);
-            }
+          for (const participant of chat.participants) {
+            map[groupId]['members'].push(participant.id._serialized);
+          }
         }
-    }
+      }
 
-    // Bucle para encontrar anuncios
-    for (const chat of chats) {
+      // Bucle para encontrar anuncios
+      for (const chat of chats) {
         if (chat.groupMetadata && chat.groupMetadata.announce) {
-            let groupId = chat.id._serialized;
-            let parentId = chat.groupMetadata.parentGroup._serialized;
+          let groupId = chat.id._serialized;
+          let parentId = chat.groupMetadata.parentGroup._serialized;
 
-            if (!map[parentId]) {
-                continue;
-            }
+          if (!map[parentId]) {
+            continue;
+          }
 
-            map[parentId]['inAnnouncements'] = [];
+          map[parentId]['inAnnouncements'] = [];
 
-            for (const participant of chat.participants) {
-                map[parentId]['inAnnouncements'].push(participant.id._serialized);
-            }
+          for (const participant of chat.participants) {
+            map[parentId]['inAnnouncements'].push(participant.id._serialized);
+          }
         }
-    }
+      }
 
-    // Comparar miembros y miembros en anuncios y enviar el informe al modroom
-    for (const communityId in map) {
+      // Comparar miembros y miembros en anuncios y enviar el informe al modroom
+      for (const communityId in map) {
         const community = map[communityId];
         console.log(community.name);
 
@@ -93,19 +95,24 @@ async function sendReport() {
         console.log('Difference: ', difference);
 
         if (difference.length > 0) {
-            const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
-            await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
+          const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
+          await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
         }
 
         groupsChecked.push(community.name); // Agregar el nombre del grupo a la lista de grupos revisados
+      }
+
+      // Enviar un mensaje con la lista de grupos revisados
+      const groupsCheckedMessage = `Los siguientes grupos fueron revisados y comparados con el canal de anuncios: ${groupsChecked.join(', ')}`;
+      await client.sendMessage((config.modRoom), groupsCheckedMessage); // Reemplazar <modroom-number> con el número del modroom
+
+      return groupsChecked; // Devolver la lista de grupos revisados
     }
 
-    // Enviar un mensaje con la lista de grupos revisados
-    const groupsCheckedMessage = `Los siguientes grupos fueron revisados y comparados con el canal de anuncios: ${groupsChecked.join(', ')}`;
-    await client.sendMessage((config.modRoom), groupsCheckedMessage); // Reemplazar <modroom-number> con el número del modroom
+    // Llamar a la función para enviar el informe
+    await sendReport();
+  }
 
-    return groupsChecked; // Devolver la lista de grupos revisados
-}
 
     
 //Pruebas y test

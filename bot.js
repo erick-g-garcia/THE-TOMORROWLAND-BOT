@@ -44,82 +44,72 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-// Función para enviar el informe al modroom
-async function sendReport() {
-    let map = {};
-    const chats = await client.getChats();
-    let checkedGroups = [];
-
-    // Bucle para encontrar comunidades
-    for (const chat of chats) {
-        if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-            let groupId = chat.id._serialized;
-
-            // Verificamos si la comunidad es la que queremos analizar (en este caso, Tomorrowland Community W2)
-            if (chat.name === 'Tomorrowland Community W2') {
-                map[groupId] = {
-                    name: chat.name,
-                    members: [],
-                };
-
-                for (const participant of chat.participants) {
-                    map[groupId]['members'].push(participant.id._serialized);
-                }
-            }
-        }
-    }
-
-    // Bucle para encontrar anuncios
-    for (const chat of chats) {
-        if (chat.groupMetadata && chat.groupMetadata.announce) {
-            let groupId = chat.id._serialized;
-            let parentId = chat.groupMetadata.parentGroup._serialized;
-
-            // Verificamos si el chat de anuncios pertenece a la comunidad que estamos analizando
-            if (map[parentId]) {
-                map[parentId]['inAnnouncements'] = [];
-
-                for (const participant of chat.participants) {
-                    map[parentId]['inAnnouncements'].push(participant.id._serialized);
-                }
-
-                // Agregamos el nombre del grupo verificado a la lista
-                checkedGroups.push(map[parentId].name);
-            }
-        }
-    }
-
-    // Construimos el mensaje con la lista de grupos verificados y comparamos con el chat de anuncios
-    let message = `Los siguientes grupos fueron revisados y comparados con el chat de anuncios:\n`;
-    checkedGroups.forEach(group => {
-        message += `${group}\n`;
-    });
-
-    // Comparar miembros y miembros en anuncios y enviar el informe al modroom
-    for (const communityId in map) {
-        const community = map[communityId];
-        console.log(community.name);
-
-        const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
-        console.log('Difference: ', difference);
-
-        if (difference.length > 0) {
-            message += `\nLos siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
-        }
-    }
-
-    // Enviamos el mensaje al modroom
-    await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
-}
-
 // Manejo del evento de mensaje
 client.on('message', async (message) => {
     console.log('Received message:', message);
 
+    // Verificar si el mensaje es el comando !report
     if (message.body === '!report') {
+        // Función para enviar el informe al modroom
+        async function sendReport() {
+            let map = {};
+
+            // Obtener todos los chats
+            const chats = await client.getChats();
+
+            // Loop sobre todos los chats para encontrar comunidades y chats de anuncios
+            for (const chat of chats) {
+                // Si es una comunidad, guardar la información
+                if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
+                    let groupId = chat.id._serialized;
+
+                    map[groupId] = {
+                        name: chat.name,
+                        members: [],
+                    };
+
+                    for (const participant of chat.participants) {
+                        map[groupId]['members'].push(participant.id._serialized);
+                    }
+                }
+
+                // Si es un chat de anuncios, guardar la información
+                if (chat.groupMetadata && chat.groupMetadata.announce) {
+                    let groupId = chat.id._serialized;
+                    let parentId = chat.groupMetadata.parentGroup._serialized;
+
+                    if (!map[parentId]) {
+                        continue;
+                    }
+
+                    map[parentId]['inAnnouncements'] = [];
+
+                    for (const participant of chat.participants) {
+                        map[parentId]['inAnnouncements'].push(participant.id._serialized);
+                    }
+                }
+            }
+
+            // Construir el mensaje con la información recolectada
+            let messageContent = '';
+            for (const communityId in map) {
+                const community = map[communityId];
+                messageContent += `Community: ${community.name}\n`;
+                const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
+                messageContent += `Difference: ${difference.join(', ')}\n\n`;
+            }
+
+            // Enviar el mensaje al modroom
+            await client.sendMessage(config.modRoom, messageContent);
+        }
+
+        // Llamar a la función para enviar el informe
         await sendReport();
     }
 });
+
+// Inicializar el cliente
+client.initialize();
 
 
     

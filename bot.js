@@ -30,6 +30,72 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
+  // This is an object, which will hold the unique chat ID as an index
+  // https://learnersbucket.com/examples/array/what-is-the-difference-between-an-array-and-an-object-in-javascript/
+  let map = {};
+ 
+  const chats = await client.getChats();
+ 
+  // Loop over all chats to find communities
+  for (const chat of chats) {
+    // Is this a community?
+    if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
+      console.log('Community: ', chat.name, chat.id._serialized);
+      let groupId = chat.id._serialized;
+ 
+      // Declare the object and create new list of members for this community
+      map[groupId] = {
+        name: chat.name,
+        members: [],
+      };
+ 
+      // Get every participant and add its ID to the map of this community
+      for (const participant of chat.participants) {
+        map[groupId]['members'].push(participant.id._serialized);
+      }
+    }
+  }
+ 
+  // Now that a map of all communities has been made, loop again to find announcements
+  for (const chat of chats) {
+    // Is this an announcement channel?
+    if (chat.groupMetadata && chat.groupMetadata.announce) {
+      console.log('Announcement: ', chat.name, chat.id._serialized);
+      let groupId = chat.id._serialized;
+      let parentId = chat.groupMetadata.parentGroup._serialized;
+ 
+      // If the map for this community ID does not exist, it means that the
+      // annoucement chat is referring a parent that was not listed in the previous loop
+      if (!map[parentId]) {
+        continue;
+      }
+ 
+      // Create a list for participants in the announcement channel
+      map[parentId]['inAnnouncements'] = [];
+ 
+      // Get every participant of the announcements channel
+      // and add its ID to list inside this community map
+      for (const participant of chat.participants) {
+        map[parentId]['inAnnouncements'].push(participant.id._serialized);
+      }
+    }
+  }
+ 
+  // Now we can loop over all communities and compare the lists.
+  // https://www.geeksforgeeks.org/how-to-get-the-difference-between-two-arrays-in-javascript/
+  // https://codereview.stackexchange.com/questions/223821/find-the-one-element-in-an-array-that-is-different-from-the-others
+ 
+  for (const communityId in map) {
+    const community = map[communityId];
+    console.log(community.name);
+ 
+    const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
+    console.log('Difference: ', difference);
+  }
+ 
+
+//Pruebas y test
+
   if (message.body.match(/(!test)/gi) && isVip) {
     message.reply('Up and working Boss 🤖');
       

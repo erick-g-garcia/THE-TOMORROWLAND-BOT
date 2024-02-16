@@ -55,13 +55,16 @@ async function sendReport() {
         if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
             let groupId = chat.id._serialized;
 
-            map[groupId] = {
-                name: chat.name,
-                members: [],
-            };
+            // Verificamos si la comunidad es la que queremos analizar (en este caso, Tomorrowland Community W2)
+            if (chat.name === 'Tomorrowland Community W2') {
+                map[groupId] = {
+                    name: chat.name,
+                    members: [],
+                };
 
-            for (const participant of chat.participants) {
-                map[groupId]['members'].push(participant.id._serialized);
+                for (const participant of chat.participants) {
+                    map[groupId]['members'].push(participant.id._serialized);
+                }
             }
         }
     }
@@ -72,18 +75,17 @@ async function sendReport() {
             let groupId = chat.id._serialized;
             let parentId = chat.groupMetadata.parentGroup._serialized;
 
-            if (!map[parentId]) {
-                continue;
+            // Verificamos si el chat de anuncios pertenece a la comunidad que estamos analizando
+            if (map[parentId]) {
+                map[parentId]['inAnnouncements'] = [];
+
+                for (const participant of chat.participants) {
+                    map[parentId]['inAnnouncements'].push(participant.id._serialized);
+                }
+
+                // Agregamos el nombre del grupo verificado a la lista
+                checkedGroups.push(map[parentId].name);
             }
-
-            map[parentId]['inAnnouncements'] = [];
-
-            for (const participant of chat.participants) {
-                map[parentId]['inAnnouncements'].push(participant.id._serialized);
-            }
-
-            // Agregamos el nombre del grupo verificado a la lista
-            checkedGroups.push(map[parentId].name);
         }
     }
 

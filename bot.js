@@ -44,10 +44,6 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
- if (message.body === '!report') {
-        await sendReport();
-    }
-
 // Función para enviar el informe al modroom
 async function sendReport() {
     const tomorrowlandW2Chats = await client.getChats().filter(chat => chat.name === 'Tomorrowland Community W2');
@@ -91,20 +87,28 @@ async function sendReport() {
         map[groupId]['inAnnouncements'].push(participant.id._serialized);
     }
 
- 
+    console.log(`Comparando los grupos de la comunidad ${groupName} con el chat de anuncios de la misma`);
 
-//Test y pruebas
+    const difference = map[groupId].members.filter((member) => !map[groupId].inAnnouncements.includes(member));
 
-  if (message.body.match(/(!test)/gi) && isVip) {
-    message.reply('Up and working Boss 🤖');
-      
-  }
+    if (difference.length > 0) {
+        const message = `Los siguientes miembros no están en el grupo de anuncios de la comunidad ${groupName}: ${difference.join(', ')}`;
+        await client.sendMessage((config.modRoom), message);
+    }
+}
 
-    //Mensajes sin necesidad de mencionar
+// Manejo del evento de mensaje
+client.on('message', async (message) => {
+    console.log('Received message:', message);
 
-  if (message.body.match(/(fuck robert)/gi)) {
-    message.reply('No, Fuck you');
-  }
+    const author = message.author || message.from;
+    const isVip = config.vips.includes(author);
+
+    if (message.body === '!report' && isVip) {
+        await sendReport();
+    }
+});
+   
 
      //Countdown command
 

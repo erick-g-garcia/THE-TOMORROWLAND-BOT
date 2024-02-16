@@ -110,6 +110,8 @@ client.on('message', async (message) => {
         // Llamar a la función para enviar el informe
         await sendReport(); // Aquí resolví el problema al llamar la función para enviar el informe al modroom.
     }
+    });
+
 
     
 //Pruebas y test

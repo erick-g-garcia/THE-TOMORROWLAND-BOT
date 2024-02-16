@@ -98,7 +98,7 @@ async function sendReport() {
 
         if (difference.length > 0) {
             const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
-            await client.sendMessage('<modroom-number>@c.us', message); // Reemplazar <modroom-number> con el número del modroom
+            await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
         }
     }
 }

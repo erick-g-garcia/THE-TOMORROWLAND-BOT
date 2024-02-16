@@ -91,10 +91,6 @@ async function sendReport() {
         map[groupId]['inAnnouncements'].push(participant.id._serialized);
     }
 
-    c
-
-
-
  
 
 //Test y pruebas

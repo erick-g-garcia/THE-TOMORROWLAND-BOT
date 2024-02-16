@@ -96,21 +96,20 @@ client.on('message', async (message) => {
                 const community = map[communityId];
                 messageContent += `Community: ${community.name}\n`;
                 const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
-                messageContent += `Difference: ${difference.join(', ')}\n\n`;
+                if (difference.length > 0) {
+                    messageContent += `These members are not in the announcements chat: ${difference.join(', ')}\n\n`;
+                } else {
+                    messageContent += 'All members are in the announcements chat.\n\n';
+                }
             }
 
             // Enviar el mensaje al modroom
-            await client.sendMessage((config.modRoom), messageContent);
+            await client.sendMessage(config.modRoom, messageContent);
         }
 
         // Llamar a la función para enviar el informe
         await sendReport();
     }
-});
-
-// Inicializar el cliente
-client.initialize();
-
 
     
 //Pruebas y test

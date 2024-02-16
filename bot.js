@@ -103,12 +103,12 @@ client.on('message', async (message) => {
                 }
             }
 
-            // Enviar el mensaje al modroom
+             // Enviar el mensaje al modroom
             await client.sendMessage(config.modRoom, messageContent);
         }
 
         // Llamar a la función para enviar el informe
-        await sendReport();
+        await sendReport(); // Aquí resolví el problema al llamar la función para enviar el informe al modroom.
     }
 
     

@@ -52,6 +52,7 @@ client.on('message', async (message) => {
 async function sendReport() {
     let map = {};
     const chats = await client.getChats();
+    let groupsChecked = [];
 
     // Bucle para encontrar comunidades
     for (const chat of chats) {
@@ -99,8 +100,17 @@ async function sendReport() {
             const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
             await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
         }
+
+        groupsChecked.push(community.name); // Agregar el nombre del grupo a la lista de grupos revisados
     }
+
+    // Enviar un mensaje con la lista de grupos revisados
+    const groupsCheckedMessage = `Los siguientes grupos fueron revisados y comparados con el canal de anuncios: ${groupsChecked.join(', ')}`;
+    await client.sendMessage((config.modRoom), groupsCheckedMessage); // Reemplazar <modroom-number> con el número del modroom
+
+    return groupsChecked; // Devolver la lista de grupos revisados
 }
+
  
 
 //Test y pruebas

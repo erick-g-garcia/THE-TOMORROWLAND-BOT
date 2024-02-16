@@ -44,7 +44,59 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-    
+// Función para enviar el informe al modroom
+async function sendReport() {
+    let map = {};
+    const chats = await client.getChats();
+
+    // Bucle para encontrar comunidades
+    for (const chat of chats) {
+        if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
+            let groupId = chat.id._serialized;
+
+            map[groupId] = {
+                name: chat.name,
+                members: [],
+            };
+
+            for (const participant of chat.participants) {
+                map[groupId]['members'].push(participant.id._serialized);
+            }
+        }
+    }
+
+    // Bucle para encontrar anuncios
+    for (const chat of chats) {
+        if (chat.groupMetadata && chat.groupMetadata.announce) {
+            let groupId = chat.id._serialized;
+            let parentId = chat.groupMetadata.parentGroup._serialized;
+
+            if (!map[parentId]) {
+                continue;
+            }
+
+            map[parentId]['inAnnouncements'] = [];
+
+            for (const participant of chat.participants) {
+                map[parentId]['inAnnouncements'].push(participant.id._serialized);
+            }
+        }
+    }
+
+    // Comparar miembros y miembros en anuncios y enviar el informe al modroom
+    for (const communityId in map) {
+        const community = map[communityId];
+        console.log(community.name);
+
+        const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
+        console.log('Difference: ', difference);
+
+        if (difference.length > 0) {
+            const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
+            await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
+        }
+    }
+}
 
     
 //Pruebas y test

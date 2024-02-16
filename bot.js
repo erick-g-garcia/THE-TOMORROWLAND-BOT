@@ -50,54 +50,49 @@ client.on('message', async (message) => {
 
 // Función para enviar el informe al modroom
 async function sendReport() {
-    const communities = await client.getChats();
-    
-    for (const community of communities) {
-        if (community.groupMetadata && community.groupMetadata.isParentGroup) {
-            const groupId = community.id._serialized;
-            const groupName = community.name;
-            const map = {};
+    const tomorrowlandW2Chats = await client.getChats().filter(chat => chat.name === 'Tomorrowland Community W2');
 
-            // Obtenemos los miembros de la comunidad actual
-            map[groupId] = {
-                name: groupName,
-                members: [],
-            };
+    if (tomorrowlandW2Chats.length === 0) {
+        console.log("No se encontraron chats para Tomorrowland Community W2");
+        return;
+    }
 
-            for (const participant of community.participants) {
-                map[groupId]['members'].push(participant.id._serialized);
-            }
+    const tomorrowlandW2Community = tomorrowlandW2Chats[0];
+    const groupId = tomorrowlandW2Community.id._serialized;
+    const groupName = tomorrowlandW2Community.name;
+    const map = {};
 
-            // Buscamos el chat de anuncios de la comunidad actual
-            let announcementsChat;
-            for (const chat of communities) {
-                if (chat.groupMetadata && chat.groupMetadata.announce && chat.groupMetadata.parentGroup._serialized === groupId) {
-                    announcementsChat = chat;
-                    break;
-                }
-            }
+    // Obtenemos los miembros de la comunidad Tomorrowland W2
+    map[groupId] = {
+        name: groupName,
+        members: [],
+    };
 
-            if (!announcementsChat) {
-                console.log(`No se encontró un chat de anuncios para la comunidad ${groupName}`);
-                continue;
-            }
+    for (const participant of tomorrowlandW2Community.participants) {
+        map[groupId]['members'].push(participant.id._serialized);
+    }
 
-            map[groupId]['inAnnouncements'] = [];
-            for (const participant of announcementsChat.participants) {
-                map[groupId]['inAnnouncements'].push(participant.id._serialized);
-            }
-
-            console.log(`Comparando los grupos de la comunidad ${groupName} con el chat de anuncios de la misma`);
-
-            const difference = map[groupId].members.filter((member) => !map[groupId].inAnnouncements.includes(member));
-
-            if (difference.length > 0) {
-                const message = `Los siguientes miembros no están en el grupo de anuncios de la comunidad ${groupName}: ${difference.join(', ')}`;
-                await client.sendMessage((config.modRoom), message);
-            }
+    // Buscamos el chat de anuncios de la comunidad Tomorrowland W2
+    let announcementsChat;
+    for (const chat of tomorrowlandW2Chats) {
+        if (chat.groupMetadata && chat.groupMetadata.announce && chat.groupMetadata.parentGroup._serialized === groupId) {
+            announcementsChat = chat;
+            break;
         }
     }
-}
+
+    if (!announcementsChat) {
+        console.log(`No se encontró un chat de anuncios para la comunidad ${groupName}`);
+        return;
+    }
+
+    map[groupId]['inAnnouncements'] = [];
+    for (const participant of announcementsChat.participants) {
+        map[groupId]['inAnnouncements'].push(participant.id._serialized);
+    }
+
+    c
+
 
 
  

@@ -44,7 +44,7 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
- if (msg.body === '!report') {
+ if (message.body === '!report') {
         await sendReport();
     }
 

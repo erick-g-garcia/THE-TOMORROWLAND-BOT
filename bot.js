@@ -45,73 +45,60 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
 
-// Verificar si el mensaje es el comando !report
-  if (message.body === '!report') {
-    // Función para enviar el informe al modroom
-    async function sendReport() {
-      let map = {};
+// Función para enviar el informe al modroom
+async function sendReport() {
+    let map = {};
+    const chats = await client.getChats();
 
-      // Obtener todos los chats
-      const chats = await client.getChats();
-
-      // Loop sobre todos los chats para encontrar comunidades y chats de anuncios
-      for (const chat of chats) {
-        // Si es una comunidad, guardar la información
+    // Bucle para encontrar comunidades
+    for (const chat of chats) {
         if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-          let groupId = chat.id._serialized;
+            let groupId = chat.id._serialized;
 
-          map[groupId] = {
-            name: chat.name,
-            members: [],
-          };
-
-          for (const participant of chat.participants) {
-            map[groupId]['members'].push(participant.id._serialized);
-          }
-        }
-
-        // Si es un chat de anuncios, guardar la información
-        if (chat.groupMetadata && chat.groupMetadata.announce) {
-          let groupId = chat.id._serialized;
-          let parentId = chat.groupMetadata.parentGroup._serialized;
-
-          if (!map[parentId]) {
-            // Si no se ha inicializado el objeto para esta comunidad,
-            // inicialízalo aquí
-            map[parentId] = {
-              name: parentId, // Puedes usar el ID serializado como nombre por ahora
-              members: [], // Inicializa members como un array vacío
-              inAnnouncements: [], // Inicializa inAnnouncements como un array vacío
+            map[groupId] = {
+                name: chat.name,
+                members: [],
             };
-          }
 
-          // Guarda los participantes del chat de anuncios en inAnnouncements
-          for (const participant of chat.participants) {
-            map[parentId]['inAnnouncements'].push(participant.id._serialized);
-          }
+            for (const participant of chat.participants) {
+                map[groupId]['members'].push(participant.id._serialized);
+            }
         }
-      }
-
-      // Construir el mensaje con la información recolectada
-      let messageContent = '';
-      for (const communityId in map) {
-        const community = map[communityId];
-        messageContent += `Community: ${community.name}\n`;
-        const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
-        if (difference.length > 0) {
-          messageContent += `These members are not in the announcements chat: ${difference.join(', ')}\n\n`;
-        } else {
-          messageContent += 'All members are in the announcements chat.\n\n';
-        }
-      }
-
-      // Enviar el mensaje al modroom
-      await client.sendMessage(config.modRoom, messageContent);
     }
 
-    // Llamar a la función para enviar el informe
-    await sendReport();
-  }
+    // Bucle para encontrar anuncios
+    for (const chat of chats) {
+        if (chat.groupMetadata && chat.groupMetadata.announce) {
+            let groupId = chat.id._serialized;
+            let parentId = chat.groupMetadata.parentGroup._serialized;
+
+            if (!map[parentId]) {
+                continue;
+            }
+
+            map[parentId]['inAnnouncements'] = [];
+
+            for (const participant of chat.participants) {
+                map[parentId]['inAnnouncements'].push(participant.id._serialized);
+            }
+        }
+    }
+
+    // Comparar miembros y miembros en anuncios y enviar el informe al modroom
+    for (const communityId in map) {
+        const community = map[communityId];
+        console.log(community.name);
+
+        const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
+        console.log('Difference: ', difference);
+
+        if (difference.length > 0) {
+            const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
+            await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
+        }
+    }
+}
+
 
 
     

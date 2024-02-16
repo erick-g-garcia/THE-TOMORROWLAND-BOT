@@ -43,7 +43,9 @@ client.on('message', async (message) => {
 
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
-// Verificar si el mensaje es el comando !report
+
+
+     // Verificar si el mensaje es el comando !report
   if (message.body === '!report') {
     // Función para enviar el informe al modroom
     async function sendReport() {
@@ -64,6 +66,13 @@ client.on('message', async (message) => {
 
           for (const participant of chat.participants) {
             map[groupId]['members'].push(participant.id._serialized);
+          }
+
+          // Bucle para encontrar grupos dentro de la comunidad
+          for (const subChat of chats) {
+            if (subChat.groupMetadata && subChat.groupMetadata.isSubGroup && subChat.groupMetadata.parentGroup.id._serialized === groupId) {
+              map[groupId].checkedGroups.push(subChat.name);
+            }
           }
         }
       }
@@ -113,6 +122,7 @@ client.on('message', async (message) => {
     // Llamar a la función para enviar el informe
     await sendReport();
   }
+
     
 
 //Pruebas y test

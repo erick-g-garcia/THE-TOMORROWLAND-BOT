@@ -131,7 +131,7 @@ client.on('message', async (message) => {
       
   }
 
-if (message.body.match(/^do you know meta$/i)) {
+if (message.body.match(/(do you know meta)/i)) {
     message.reply('Who is that btch?');
 }
 

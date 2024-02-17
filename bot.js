@@ -148,7 +148,7 @@ function seleccionarRespuestaAleatoria() {
 }
 
 // Lógica principal del bot
-if (message.body.match(/^do you know meta$/i)) {
+if (message.body.match(/(do you know meta)/i)) {
     // Obtiene una respuesta aleatoria
     const respuestaAleatoria = seleccionarRespuestaAleatoria();
     // Responde con la respuesta aleatoria seleccionada

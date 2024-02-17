@@ -131,12 +131,12 @@ client.on('message', async (message) => {
       
   }
 
- if (message.body.startsWith('do you know meta')/gi) {
+ if (message.body.matchAll('do you know meta')/gi) {
     message.reply('Whos that btch?');
   }
 
     
-if (message.body.startsWith('meta')/gi) {
+if (message.body.matchAll('meta')/gi) {
     message.reply('it looks like you want to test my banhammer');
   }
 

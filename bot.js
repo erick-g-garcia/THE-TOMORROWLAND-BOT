@@ -131,7 +131,7 @@ client.on('message', async (message) => {
       
   }
 
- if (message.body.startWith('do you know meta')/gi) {
+ if (message.body.startsWith('do you know meta')/gi) {
     message.reply('Whos that btch?');
   }
 

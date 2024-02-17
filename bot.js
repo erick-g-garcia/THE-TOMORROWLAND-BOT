@@ -136,7 +136,7 @@ client.on('message', async (message) => {
   }
 
     
-if (message.body.startsWith(/(meta)/gi)) {
+if (message.body.startsWith(/^(meta)$/gi)) {
     message.reply('it looks like you want to test my banhammer');
   }
 

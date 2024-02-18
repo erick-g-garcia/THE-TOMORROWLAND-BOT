@@ -130,37 +130,6 @@ client.on('message', async (message) => {
     message.reply('Up and working Boss 🤖');
       
   }
-
-// Define las respuestas posibles en un array
-const respuestas = [
-    'Who is that btch?',
-    'I dont know',
-    'Try asking again'
-    // Agrega más respuestas aquí si es necesario
-];
-
-// Función para seleccionar una respuesta al azar
-function seleccionarRespuestaAleatoria() {
-    // Obtiene un índice aleatorio dentro del rango del array de respuestas
-    const indiceRespuestaAleatoria = Math.floor(Math.random() * respuestas.length);
-    // Selecciona una respuesta aleatoria usando el índice aleatorio
-    return respuestas[indiceRespuestaAleatoria];
-}
-
-// Lógica principal del bot
-if (message.body.match(/(do you know meta)/i)) {
-    // Obtiene una respuesta aleatoria
-    const respuestaAleatoria = seleccionarRespuestaAleatoria();
-    // Responde con la respuesta aleatoria seleccionada
-    message.reply(respuestaAleatoria);
-}
-
-
-    
- if (message.body.match(/(meta)/gi)) {
-    message.reply('it looks like you want to test my banhammer');
-  }
-
     
 
      //Countdown command

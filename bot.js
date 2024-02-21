@@ -44,9 +44,26 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-    // Suponiendo que config.karma es un objeto que mapea IDs de usuario a su karma.
+   import fs from 'fs';
+import { Client } from 'whatsapp-web.js';
 
-// Definir una función para manejar el comando !addkarma
+const client = new Client();
+
+// Ruta al archivo donde se guardará el karma
+const karmaFilePath = './karma.json';
+
+// Inicializar la configuración de karma
+let config = {
+  karma: {}
+};
+
+// Cargar el karma almacenado en el archivo (si existe)
+if (fs.existsSync(karmaFilePath)) {
+  const data = fs.readFileSync(karmaFilePath, 'utf8');
+  config = JSON.parse(data);
+}
+
+// Manejar el comando !addkarma
 function handleAddKarmaCommand(command, message) {
   const args = command.split(' ');
   if (args.length !== 3 || args[0] !== '!addkarma') {
@@ -68,6 +85,9 @@ function handleAddKarmaCommand(command, message) {
       message.from,
       `Se agregaron ${karmaToAdd} puntos de karma a ${mentionedUser.id.user}.`
     );
+
+    // Guardar el karma actualizado en el archivo
+    fs.writeFileSync(karmaFilePath, JSON.stringify(config, null, 2), 'utf8');
   } else {
     // El formato del comando es incorrecto o el karma a agregar no es un número válido
     client.sendMessage(
@@ -77,16 +97,12 @@ function handleAddKarmaCommand(command, message) {
   }
 }
 
-// Suponiendo que `client` es el cliente de WhatsApp y `config` contiene la configuración de tu aplicación.
-
-// Aquí es donde procesas los mensajes entrantes
-client.onMessage(message => {
+// Escuchar mensajes entrantes
+client.on('message', async message => {
   // Verificar si el mensaje es un comando !addkarma
   if (message.body.startsWith('!addkarma')) {
     handleAddKarmaCommand(message.body, message);
   }
-});
-
 
 
    // Verificar si el mensaje es el comando !report

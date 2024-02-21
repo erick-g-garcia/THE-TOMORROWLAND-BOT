@@ -310,6 +310,8 @@ Vips: ${util.phoneList(config.vips)}
       const quotedAuthor = quotedMessage.author || quotedMessage.from
       quotedMessage.delete(false)
       config.vips.push(quotedAuthor)
+      // Guardar la configuración actualizada después de agregar un VIP
+    saveConfig();
     }
 
     message.mentionedIds.forEach((mention) => {
@@ -375,6 +377,7 @@ Vips: ${util.phoneList(config.vips)}
     const contact = await message.getContact()
 
     config.karma[author] = (config.karma[author] || 0) + 10
+    saveConfig(); // Guardar la configuración actualizada después de agregar karma
 
     client.sendMessage(
       config.modRoom,

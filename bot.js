@@ -46,8 +46,6 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
 
-const client = new Client();
-
 // Ruta al archivo donde se guardará el karma
 const karmaFilePath = './karma.json';
 

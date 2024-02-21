@@ -60,100 +60,62 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-
 // Verificar si el mensaje es el comando !report
 if (message.body === '!report') {
   // Función para enviar el informe al modroom
   async function sendReport() {
-    let map = {};
-    const chats = await client.getChats();
-    let allGroups = [];
+    let announcementGroupId = '120363148340528283@g.us'; // ID del grupo de anuncios
+    let membersNotInAnnouncement = {};
 
-    // Bucle para encontrar comunidades
-    for (const chat of chats) {
-      if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-        let groupId = chat.id._serialized;
+    try {
+      const chats = await client.getChats();
 
-        map[groupId] = {
-          name: chat.name,
-          members: [],
-          inAnnouncements: [], // Arreglo para almacenar los miembros en anuncios
-          checkedGroups: [],
-        };
+      // Recorrer todos los chats (grupos) de la comunidad
+      for (const chat of chats) {
+        // Solo considerar grupos de WhatsApp
+        if (chat.isGroup) {
+          let groupId = chat.id._serialized;
+          let groupName = chat.name || 'Grupo sin nombre';
 
-        for (const participant of chat.participants) {
-          map[groupId]['members'].push(participant.id._serialized);
-        }
+          // Obtener los miembros del grupo
+          const groupMembers = chat.participants.map(participant => participant.id._serialized);
 
-        // Bucle para encontrar grupos dentro de la comunidad
-        for (const subChat of chats) {
-          if (subChat.groupMetadata && subChat.groupMetadata.isSubGroup && subChat.groupMetadata.parentGroup.id._serialized === groupId) {
-            map[groupId].checkedGroups.push(subChat.name);
-            allGroups.push(subChat.name); // Agregar el grupo a la lista de todos los grupos
+          // Obtener los miembros del grupo de anuncios
+          let announcementGroup = chats.find(c => c.id._serialized === announcementGroupId);
+          const announcementMembers = announcementGroup ? announcementGroup.participants.map(participant => participant.id._serialized) : [];
+
+          // Encontrar los miembros que no están en el grupo de anuncios
+          const membersNotInAnnouncementGroup = groupMembers.filter(member => !announcementMembers.includes(member));
+
+          // Agregar a la lista si hay miembros que no están en el grupo de anuncios
+          if (membersNotInAnnouncementGroup.length > 0) {
+            membersNotInAnnouncement[groupName] = membersNotInAnnouncementGroup;
           }
         }
       }
+
+      // Construir el mensaje con la lista de miembros que no están en el grupo de anuncios
+      let message = 'Lista de miembros que no están en el grupo de anuncios:\n\n';
+      for (const groupName in membersNotInAnnouncement) {
+        message += `${groupName}:\n`;
+        membersNotInAnnouncement[groupName].forEach(member => {
+          message += `- ${member}\n`;
+        });
+        message += '\n';
+      }
+
+      // Enviar el informe al modroom
+      await client.sendMessage((config.modRoom), message);
+    } catch (error) {
+      console.error('Error al obtener la lista de miembros:', error);
+      await client.sendMessage((config.modRoom), '¡Ups! Hubo un error al obtener la lista de miembros.');
     }
-
-    // Bucle para encontrar anuncios
-    for (const chat of chats) {
-      if (chat.groupMetadata && chat.groupMetadata.announce) {
-        let parentId = chat.groupMetadata.parentGroup._serialized;
-
-        if (!map[parentId]) {
-          continue;
-        }
-
-        for (const participant of chat.participants) {
-          map[parentId]['inAnnouncements'].push(participant.id._serialized);
-        }
-      }
-    }
-
-    // Comparar miembros y miembros en anuncios y enviar el informe al modroom
-    for (const communityId in map) {
-      const community = map[communityId];
-      let reportMessage = `Los siguientes miembros no están en el grupo de anuncios del grupo ${community.name}:\n\n`;
-
-      reportMessage += 'Miembros en el grupo:\n';
-      for (const member of community.members) {
-        reportMessage += `${member}\n`;
-      }
-
-      reportMessage += '\nMiembros en el grupo de anuncios:\n';
-      for (const member of community.inAnnouncements) {
-        reportMessage += `${member}\n`;
-      }
-
-      // Convertir todos los identificadores a un formato común para facilitar la comparación
-      const normalizedMembers = community.members.map(member => member.replace(/@c\.us/g, '').replace(/@lid/g, ''));
-      const normalizedAnnouncementMembers = community.inAnnouncements.map(member => member.replace(/@c\.us/g, '').replace(/@lid/g, ''));
-
-      // Comparar los miembros en la comunidad con los miembros en los anuncios
-      const difference = normalizedMembers.filter(member => !normalizedAnnouncementMembers.includes(member));
-
-      // Si hay diferencias, agregarlas al mensaje de reporte
-      if (difference.length > 0) {
-        reportMessage += '\n\nLos siguientes miembros están en el grupo pero no en el grupo de anuncios:\n';
-        for (const member of difference) {
-          reportMessage += `${member}\n`;
-        }
-      } else {
-        reportMessage += '\nTodos los miembros del grupo están en el grupo de anuncios.';
-      }
-
-      // Enviar el mensaje de reporte al modroom
-      await client.sendMessage(config.modRoom, reportMessage);
-    }
-
-    // Enviar un mensaje con la lista de todos los grupos revisados
-    let allGroupsMessage = `Todos los grupos de la comunidad fueron revisados y verificados: ${allGroups.join(', ')}`;
-    await client.sendMessage(config.modRoom, allGroupsMessage); // Reemplazar <modroom-number> con el número del modroom
   }
 
   // Llamar a la función para enviar el informe
   await sendReport();
 }
+
 
 
     

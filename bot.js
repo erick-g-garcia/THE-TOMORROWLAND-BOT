@@ -61,7 +61,7 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
 
-  // Verificar si el mensaje es el comando !report
+// Verificar si el mensaje es el comando !report
 if (message.body === '!report') {
   // Función para enviar el informe al modroom
   async function sendReport() {
@@ -118,7 +118,11 @@ if (message.body === '!report') {
       console.log('Members:', community.members);
       console.log('Members in Announcements:', community.inAnnouncements);
 
-      const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
+      // Normalizar los identificadores antes de la comparación
+      const normalizedMembers = community.members.map(member => member.replace(/@c\.us/g, ''));
+      const normalizedAnnouncementMembers = community.inAnnouncements.map(member => member.replace(/@lid/g, ''));
+
+      const difference = normalizedMembers.filter(member => !normalizedAnnouncementMembers.includes(member));
       console.log('Difference: ', difference);
 
       if (difference.length > 0) {
@@ -127,7 +131,7 @@ if (message.body === '!report') {
       }
 
       // Si deseas enviar un mensaje con la lista de todos los grupos revisados, aquí puedes hacerlo
-      //groupsChecked[community.name] = community.checkedGroups.join(', '); // Agregar el nombre del grupo a la lista de grupos revisados
+      groupsChecked[community.name] = community.checkedGroups.join(', '); // Agregar el nombre del grupo a la lista de grupos revisados
     }
 
     // Enviar un mensaje con la lista de todos los grupos revisados

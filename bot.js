@@ -68,7 +68,6 @@ if (message.body === '!report') {
     let map = {};
     const chats = await client.getChats();
     let allGroups = [];
-    let groupsChecked = {}; // Definir la variable groupsChecked
 
     // Bucle para encontrar comunidades
     for (const chat of chats) {
@@ -114,24 +113,37 @@ if (message.body === '!report') {
     // Comparar miembros y miembros en anuncios y enviar el informe al modroom
     for (const communityId in map) {
       const community = map[communityId];
-      console.log(community.name);
+      let reportMessage = `Los siguientes miembros no están en el grupo de anuncios del grupo ${community.name}:\n\n`;
 
-      console.log('Members:', community.members);
-      console.log('Members in Announcements:', community.inAnnouncements);
-
-      // Normalizar los identificadores antes de la comparación
-      const normalizedMembers = community.members.map(member => member.replace(/@c\.us/g, ''));
-      const normalizedAnnouncementMembers = community.inAnnouncements.map(member => member.replace(/@lid/g, ''));
-
-      const difference = normalizedMembers.filter(member => !normalizedAnnouncementMembers.includes(member));
-      console.log('Difference: ', difference);
-
-      if (difference.length > 0) {
-        const message = `Los siguientes miembros no están en el canal de anuncios de ${community.name}: ${difference.join(', ')}`;
-        await client.sendMessage(config.modRoom, message); // Reemplazar <modroom-number> con el número del modroom
+      reportMessage += 'Miembros en el grupo:\n';
+      for (const member of community.members) {
+        reportMessage += `${member}\n`;
       }
 
-      groupsChecked[community.name] = community.checkedGroups.join(', '); // Agregar el nombre del grupo a la lista de grupos revisados
+      reportMessage += '\nMiembros en el grupo de anuncios:\n';
+      for (const member of community.inAnnouncements) {
+        reportMessage += `${member}\n`;
+      }
+
+      // Convertir todos los identificadores a un formato común para facilitar la comparación
+      const normalizedMembers = community.members.map(member => member.replace(/@c\.us/g, '').replace(/@lid/g, ''));
+      const normalizedAnnouncementMembers = community.inAnnouncements.map(member => member.replace(/@c\.us/g, '').replace(/@lid/g, ''));
+
+      // Comparar los miembros en la comunidad con los miembros en los anuncios
+      const difference = normalizedMembers.filter(member => !normalizedAnnouncementMembers.includes(member));
+
+      // Si hay diferencias, agregarlas al mensaje de reporte
+      if (difference.length > 0) {
+        reportMessage += '\n\nLos siguientes miembros están en el grupo pero no en el grupo de anuncios:\n';
+        for (const member of difference) {
+          reportMessage += `${member}\n`;
+        }
+      } else {
+        reportMessage += '\nTodos los miembros del grupo están en el grupo de anuncios.';
+      }
+
+      // Enviar el mensaje de reporte al modroom
+      await client.sendMessage(config.modRoom, reportMessage);
     }
 
     // Enviar un mensaje con la lista de todos los grupos revisados

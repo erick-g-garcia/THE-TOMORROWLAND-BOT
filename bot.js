@@ -68,6 +68,7 @@ if (message.body === '!report') {
     let map = {};
     const chats = await client.getChats();
     let allGroups = [];
+    let groupsChecked = {}; // Definir la variable groupsChecked
 
     // Bucle para encontrar comunidades
     for (const chat of chats) {
@@ -130,7 +131,6 @@ if (message.body === '!report') {
         await client.sendMessage(config.modRoom, message); // Reemplazar <modroom-number> con el número del modroom
       }
 
-      // Si deseas enviar un mensaje con la lista de todos los grupos revisados, aquí puedes hacerlo
       groupsChecked[community.name] = community.checkedGroups.join(', '); // Agregar el nombre del grupo a la lista de grupos revisados
     }
 
@@ -142,6 +142,7 @@ if (message.body === '!report') {
   // Llamar a la función para enviar el informe
   await sendReport();
 }
+
 
     
 

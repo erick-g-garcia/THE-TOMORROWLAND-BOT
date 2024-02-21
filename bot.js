@@ -45,6 +45,10 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
+import fs from 'fs';
+import { Client } from 'whatsapp-web.js';
+
+const client = new Client();
 
 // Ruta al archivo donde se guardará el karma
 const karmaFilePath = './karma.json';
@@ -59,8 +63,6 @@ if (fs.existsSync(karmaFilePath)) {
   const data = fs.readFileSync(karmaFilePath, 'utf8');
   config = JSON.parse(data);
 }
-
-// ...
 
 // Manejar el comando !addkarma
 function handleAddKarmaCommand(command, message) {
@@ -96,13 +98,17 @@ function handleAddKarmaCommand(command, message) {
   }
 }
 
-
 // Escuchar mensajes entrantes
 client.on('message', async message => {
   // Verificar si el mensaje es un comando !addkarma
   if (message.body.startsWith('!addkarma')) {
     handleAddKarmaCommand(message.body, message);
   }
+});
+
+// Conectar el cliente de WhatsApp
+client.initialize();
+
 
 
    // Verificar si el mensaje es el comando !report

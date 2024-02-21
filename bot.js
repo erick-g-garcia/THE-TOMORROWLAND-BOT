@@ -44,6 +44,50 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
+    // Suponiendo que config.karma es un objeto que mapea IDs de usuario a su karma.
+
+// Definir una función para manejar el comando !addkarma
+function handleAddKarmaCommand(command, message) {
+  const args = command.split(' ');
+  if (args.length !== 3 || args[0] !== '!addkarma') {
+    // El comando no tiene el formato correcto
+    return;
+  }
+
+  // Extraer el karma a agregar y la persona mencionada
+  const karmaToAdd = parseInt(args[1]);
+  const mentionedUser = message.mentions[0]; // Suponiendo que solo se menciona una persona
+
+  if (!isNaN(karmaToAdd) && mentionedUser) {
+    // Actualizar el karma de la persona mencionada
+    const userId = mentionedUser.id.user;
+    config.karma[userId] = (config.karma[userId] || 0) + karmaToAdd;
+
+    // Enviar un mensaje para confirmar la actualización del karma
+    client.sendMessage(
+      message.from,
+      `Se agregaron ${karmaToAdd} puntos de karma a ${mentionedUser.id.user}.`
+    );
+  } else {
+    // El formato del comando es incorrecto o el karma a agregar no es un número válido
+    client.sendMessage(
+      message.from,
+      `Formato incorrecto. Usa !addkarma [puntos] @usuario para agregar karma.`
+    );
+  }
+}
+
+// Suponiendo que `client` es el cliente de WhatsApp y `config` contiene la configuración de tu aplicación.
+
+// Aquí es donde procesas los mensajes entrantes
+client.onMessage(message => {
+  // Verificar si el mensaje es un comando !addkarma
+  if (message.body.startsWith('!addkarma')) {
+    handleAddKarmaCommand(message.body, message);
+  }
+});
+
+
 
    // Verificar si el mensaje es el comando !report
   if (message.body === '!report') {

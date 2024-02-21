@@ -165,7 +165,7 @@ if (message.body === '!report') {
       
   }
   // Verificar si el mensaje es el comando !group para usuarios VIP
-if (message.body.toLowerCase() === '!group' && isVIP(message.sender)) {
+if (message.body.toLowerCase() === '!group' && isVip) {
   // Función para obtener la lista de grupos y sus IDs
   async function getGroupList() {
     try {
@@ -181,19 +181,16 @@ if (message.body.toLowerCase() === '!group' && isVIP(message.sender)) {
     }
   }
 
-  // Función para verificar si el usuario es VIP (simulado para demostración)
-  function isVIP(sender) {
-    // Simulación de la verificación del estado VIP del usuario
-    // Aquí puedes implementar tu lógica real para verificar si el usuario es VIP
-    const vipUsers = ['usuario1', 'usuario2', 'usuario3']; // Lista de usuarios VIP
-    return vipUsers.includes(sender);
+  // Función para verificar si el usuario es VIP
+  const isVip = vipUsers.includes(message.author);
+  
+  if(isVip) {
+    // Llamar a la función para obtener la lista de grupos y sus IDs
+    await getGroupList();
+  } else {
+    // Enviar un mensaje de error si el usuario no es VIP
+    await client.sendMessage(message.from, 'Lo siento, este comando solo está disponible para usuarios VIP.');
   }
-
-  // Llamar a la función para obtener la lista de grupos y sus IDs
-  await getGroupList();
-} else {
-  // Enviar un mensaje de error si el usuario no es VIP
-  await client.sendMessage(message.from, 'Lo siento, este comando solo está disponible para usuarios VIP.');
 }
 
     

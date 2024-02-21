@@ -11,6 +11,22 @@ import { spawn } from 'child_process';
 import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
+let config = {};
+
+// Function to save configuration to recovery.json
+function saveConfig() {
+  const data = JSON.stringify(config, null, 2);
+  fs.writeFileSync('recovery.json', data);
+}
+
+// Load configuration from recovery.json if it exists
+try {
+  const recoveryData = fs.readFileSync('recovery.json', 'utf8');
+  config = JSON.parse(recoveryData);
+} catch (error) {
+  console.error('Error loading recovery data:', error);
+}
+
 function calculateRemainingTime(targetDate) {
     const currentDate = new Date();
     const currentTimezoneOffset = currentDate.getTimezoneOffset();

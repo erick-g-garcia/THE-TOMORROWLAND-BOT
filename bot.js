@@ -122,7 +122,7 @@ client.on('message', async (message) => {
         console.log('Difference: ', difference);
 
         if (difference.length > 0) {
-          const message = `Los siguientes miembros no están en el grupo de anuncios de ${community.name}: ${difference.join(', ')}`;
+          const message = `The following members are not in the announcement channel ${community.name}: ${difference.join(', ')}`;
           await client.sendMessage((config.modRoom), message); // Reemplazar <modroom-number> con el número del modroom
         }
 
@@ -130,7 +130,7 @@ client.on('message', async (message) => {
       }
 
       // Enviar un mensaje con la lista de todos los grupos revisados
-      let allGroupsMessage = `Lista de todos los grupos revisados: ${allGroups.join(', ')}`;
+      let allGroupsMessage = `All the community groups were reviewed and verified ${allGroups.join(', ')}`;
       await client.sendMessage((config.modRoom), allGroupsMessage); // Reemplazar <modroom-number> con el número del modroom
     }
 

@@ -115,6 +115,9 @@ if (message.body === '!report') {
       const community = map[communityId];
       console.log(community.name);
 
+      console.log('Members:', community.members);
+      console.log('Members in Announcements:', community.inAnnouncements);
+
       const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
       console.log('Difference: ', difference);
 

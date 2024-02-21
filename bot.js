@@ -60,13 +60,11 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-
 // Verificar si el mensaje es el comando !report
 if (message.body === '!report') {
   // Función para enviar el informe al modroom
   async function sendReport() {
     let announcementGroupId = '120363148340528283@g.us'; // ID del grupo de anuncios
-    let membersNotInAnnouncement = {};
 
     try {
       const chats = await client.getChats();
@@ -74,6 +72,9 @@ if (message.body === '!report') {
       // Encontrar el grupo de anuncios
       let announcementGroup = chats.find(c => c.id._serialized === announcementGroupId);
       const announcementMembers = announcementGroup ? announcementGroup.participants.map(participant => participant.id._serialized) : [];
+
+      // Construir el mensaje con la lista de miembros que no están en el grupo de anuncios
+      let message = 'Lista de miembros que no están en el grupo de anuncios:\n\n';
 
       // Recorrer todos los chats (grupos) de la comunidad
       for (const chat of chats) {
@@ -88,21 +89,23 @@ if (message.body === '!report') {
           // Encontrar los miembros que no están en el grupo de anuncios
           const membersNotInAnnouncementGroup = groupMembers.filter(member => !announcementMembers.includes(member));
 
-          // Agregar a la lista si hay miembros que no están en el grupo de anuncios
+          // Si hay miembros que no están en el grupo de anuncios, agregarlos al mensaje
           if (membersNotInAnnouncementGroup.length > 0) {
-            membersNotInAnnouncement[groupName] = membersNotInAnnouncementGroup.length;
+            message += `${groupName} - ID: ${groupId}\n`;
+            for (const member of membersNotInAnnouncementGroup) {
+              message += `${member}\n`;
+            }
+            message += '\n';
           }
         }
       }
 
-      // Construir el mensaje con la lista de miembros que no están en el grupo de anuncios
-      let message = 'Lista de grupos con miembros que no están en el grupo de anuncios:\n\n';
-      for (const groupName in membersNotInAnnouncement) {
-        message += `${groupName}: ${membersNotInAnnouncement[groupName]} miembros\n`;
+      // Enviar el informe al modroom si hay miembros que no están en el grupo de anuncios
+      if (message !== 'Lista de miembros que no están en el grupo de anuncios:\n\n') {
+        await client.sendMessage((config.modRoom), message);
+      } else {
+        await client.sendMessage((config.modRoom), '¡Todos los miembros están en el grupo de anuncios!');
       }
-
-      // Enviar el informe al modroom
-      await client.sendMessage((config.modRoom), message);
     } catch (error) {
       console.error('Error al obtener la lista de miembros:', error);
       await client.sendMessage((config.modRoom), '¡Ups! Hubo un error al obtener la lista de miembros.');

@@ -60,6 +60,7 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
+
 // Verificar si el mensaje es el comando !report
 if (message.body === '!report') {
   // Función para enviar el informe al modroom
@@ -69,6 +70,10 @@ if (message.body === '!report') {
 
     try {
       const chats = await client.getChats();
+
+      // Encontrar el grupo de anuncios
+      let announcementGroup = chats.find(c => c.id._serialized === announcementGroupId);
+      const announcementMembers = announcementGroup ? announcementGroup.participants.map(participant => participant.id._serialized) : [];
 
       // Recorrer todos los chats (grupos) de la comunidad
       for (const chat of chats) {
@@ -80,28 +85,20 @@ if (message.body === '!report') {
           // Obtener los miembros del grupo
           const groupMembers = chat.participants.map(participant => participant.id._serialized);
 
-          // Obtener los miembros del grupo de anuncios
-          let announcementGroup = chats.find(c => c.id._serialized === announcementGroupId);
-          const announcementMembers = announcementGroup ? announcementGroup.participants.map(participant => participant.id._serialized) : [];
-
           // Encontrar los miembros que no están en el grupo de anuncios
           const membersNotInAnnouncementGroup = groupMembers.filter(member => !announcementMembers.includes(member));
 
           // Agregar a la lista si hay miembros que no están en el grupo de anuncios
           if (membersNotInAnnouncementGroup.length > 0) {
-            membersNotInAnnouncement[groupName] = membersNotInAnnouncementGroup;
+            membersNotInAnnouncement[groupName] = membersNotInAnnouncementGroup.length;
           }
         }
       }
 
       // Construir el mensaje con la lista de miembros que no están en el grupo de anuncios
-      let message = 'Lista de miembros que no están en el grupo de anuncios:\n\n';
+      let message = 'Lista de grupos con miembros que no están en el grupo de anuncios:\n\n';
       for (const groupName in membersNotInAnnouncement) {
-        message += `${groupName}:\n`;
-        membersNotInAnnouncement[groupName].forEach(member => {
-          message += `- ${member}\n`;
-        });
-        message += '\n';
+        message += `${groupName}: ${membersNotInAnnouncement[groupName]} miembros\n`;
       }
 
       // Enviar el informe al modroom

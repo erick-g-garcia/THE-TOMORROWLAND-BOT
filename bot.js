@@ -46,62 +46,6 @@ client.on('message', async (message) => {
   const isVip = config.vips.includes(author);
 
 
-// Ruta al archivo donde se guardará el karma
-const karmaFilePath = './karma.json';
-
-// Inicializar la configuración de karma
-let config = {
-  karma: {}
-};
-
-// Cargar el karma almacenado en el archivo (si existe)
-if (fs.existsSync(karmaFilePath)) {
-  const data = fs.readFileSync(karmaFilePath, 'utf8');
-  config = JSON.parse(data);
-}
-
-// Manejar el comando !addkarma
-function handleAddKarmaCommand(command, message) {
-  const args = command.split(' ');
-  if (args.length !== 3 || args[0] !== '!addkarma') {
-    // El comando no tiene el formato correcto
-    return;
-  }
-
-  // Extraer el karma a agregar y la persona mencionada
-  const karmaToAdd = parseInt(args[1]);
-  const mentionedUser = message.mentions[0]; // Suponiendo que solo se menciona una persona
-
-  if (!isNaN(karmaToAdd) && mentionedUser) {
-    // Actualizar el karma de la persona mencionada
-    const userId = mentionedUser.id.user;
-    config.karma[userId] = (config.karma[userId] || 0) + karmaToAdd;
-
-    // Enviar un mensaje para confirmar la actualización del karma
-    client.sendMessage(
-      message.from,
-      `Se agregaron ${karmaToAdd} puntos de karma a ${mentionedUser.id.user}.`
-    );
-
-    // Guardar el karma actualizado en el archivo
-    fs.writeFileSync(karmaFilePath, JSON.stringify(config, null, 2), 'utf8');
-  } else {
-    // El formato del comando es incorrecto o el karma a agregar no es un número válido
-    client.sendMessage(
-      message.from,
-      `Formato incorrecto. Usa !addkarma [puntos] @usuario para agregar karma.`
-    );
-  }
-}
-
-// Escuchar mensajes entrantes
-client.on('message', async message => {
-  // Verificar si el mensaje es un comando !addkarma
-  if (message.body.startsWith('!addkarma')) {
-    handleAddKarmaCommand(message.body, message);
-  }
-
-
    // Verificar si el mensaje es el comando !report
   if (message.body === '!report') {
     // Función para enviar el informe al modroom

@@ -11,7 +11,6 @@ import { spawn } from 'child_process';
 import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
-let config = {};
 
 // Function to save configuration to recovery.json
 function saveConfig() {

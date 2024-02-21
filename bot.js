@@ -5,6 +5,7 @@ import images from './images.js';
 import util from './util.js';
 import planner from './planner.js';
 import qrcode from 'qrcode-terminal';
+import fs from 'fs';
 import pkg from 'whatsapp-web.js';
 import { spawn } from 'child_process';
 import OpenAI from "openai";

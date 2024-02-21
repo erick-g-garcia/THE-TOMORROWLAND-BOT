@@ -45,8 +45,6 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-   import fs from 'fs';
-import { Client } from 'whatsapp-web.js';
 
 const client = new Client();
 

@@ -21,7 +21,7 @@ function saveConfig() {
 // Load configuration from recovery.json if it exists
 try {
   const recoveryData = fs.readFileSync('recovery.json', 'utf8');
-  config = JSON.parse(recoveryData);
+  Object.assign(config, JSON.parse(recoveryData)); // Merge loaded configuration with config.js
 } catch (error) {
   console.error('Error loading recovery data:', error);
 }

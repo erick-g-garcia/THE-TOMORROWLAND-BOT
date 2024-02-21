@@ -60,6 +60,8 @@ if (fs.existsSync(karmaFilePath)) {
   config = JSON.parse(data);
 }
 
+// ...
+
 // Manejar el comando !addkarma
 function handleAddKarmaCommand(command, message) {
   const args = command.split(' ');
@@ -93,6 +95,7 @@ function handleAddKarmaCommand(command, message) {
     );
   }
 }
+
 
 // Escuchar mensajes entrantes
 client.on('message', async message => {

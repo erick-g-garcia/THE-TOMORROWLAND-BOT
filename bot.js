@@ -411,6 +411,7 @@ ${message.body}
       { mentions: [contact] }
     )
   }
+});
 
 
 client.on('message', async (message) => {

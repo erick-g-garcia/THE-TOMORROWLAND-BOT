@@ -127,6 +127,20 @@ if (message.body === '!report') {
       
   }
 
+   if (message.body.toLowerCase() === '!cleanrecovery' && isAdmin(message.sender)) {
+    try {
+      // Limpiar el contenido del archivo recovery.json
+      fs.writeFileSync('recovery.json', '{}');
+      // Enviar mensaje de confirmación
+      client.sendMessage(message.from, 'La información del archivo recovery.json ha sido limpiada correctamente.');
+    } catch (error) {
+      console.error('Error al limpiar recovery.json:', error);
+      // Enviar mensaje de error en caso de fallo
+      client.sendMessage(message.from, 'Se produjo un error al intentar limpiar la información del archivo recovery.json.');
+    }
+  
+
+
   // Verificar si el mensaje es el comando !group
 if (message.body.toLowerCase() === '!group') {
   // Función para obtener la lista de grupos y sus IDs

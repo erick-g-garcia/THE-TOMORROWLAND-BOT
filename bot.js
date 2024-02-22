@@ -127,13 +127,19 @@ if (message.body === '!report') {
       
   }
 
-if (message.body.toLowerCase() === '!cleanrecovery') {
+// Declare config using let instead of const
+let config = {};
+
+client.on('message', async (message) => {
+  console.log('Received message:', message);
+
+  if (message.body.toLowerCase() === '!cleanrecovery') {
     try {
       // Overwrite the recovery.json file with an empty JSON object
       fs.writeFileSync('recovery.json', '{}');
       console.log('Recovery file cleaned.');
 
-      // Clear the general memory
+      // Clear the general memory by reassigning an empty object to config
       config = {};
       console.log('General memory cleaned.');
 

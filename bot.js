@@ -127,31 +127,7 @@ if (message.body === '!report') {
       
   }
 
-// Declare config using let instead of const
-let config = {};
 
-client.on('message', async (message) => {
-  console.log('Received message:', message);
-
-  if (message.body.toLowerCase() === '!cleanrecovery') {
-    try {
-      // Overwrite the recovery.json file with an empty JSON object
-      fs.writeFileSync('recovery.json', '{}');
-      console.log('Recovery file cleaned.');
-
-      // Clear the general memory by reassigning an empty object to config
-      config = {};
-      console.log('General memory cleaned.');
-
-      // Send a message indicating that both the recovery file and general memory have been cleaned successfully
-      client.sendMessage(message.from, 'Recovery file and general memory cleaned.');
-    } catch (error) {
-      console.error('Error cleaning recovery file and general memory:', error);
-      // Send a message if there is an error cleaning the recovery file and general memory
-      client.sendMessage(message.from, `Error cleaning recovery file and general memory: ${error.message}`);
-    }
-  }
-  
 
 
   // Verificar si el mensaje es el comando !group
@@ -506,6 +482,31 @@ If you think it is a mistake, send a message to an admin to clear your karma lev
       return;
     } catch (error) {
       console.error('Error:', error);
+    }
+  }
+});
+
+let config = {};
+
+client.on('message', async (message) => {
+  console.log('Received message:', message);
+
+  if (message.body.toLowerCase() === '!cleanrecovery') {
+    try {
+      // Overwrite the recovery.json file with an empty JSON object
+      fs.writeFileSync('recovery.json', '{}');
+      console.log('Recovery file cleaned.');
+
+      // Clear the general memory by reassigning an empty object to config
+      config = {};
+      console.log('General memory cleaned.');
+
+      // Send a message indicating that both the recovery file and general memory have been cleaned successfully
+      client.sendMessage(message.from, 'Recovery file and general memory cleaned.');
+    } catch (error) {
+      console.error('Error cleaning recovery file and general memory:', error);
+      // Send a message if there is an error cleaning the recovery file and general memory
+      client.sendMessage(message.from, `Error cleaning recovery file and general memory: ${error.message}`);
     }
   }
 });

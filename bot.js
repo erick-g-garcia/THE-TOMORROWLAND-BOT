@@ -144,6 +144,7 @@ client.on('message', async (message) => {
         // Send a confirmation message
         client.sendMessage(message.from, 'File system cleaned successfully.');
     }
+  });
 
 
 

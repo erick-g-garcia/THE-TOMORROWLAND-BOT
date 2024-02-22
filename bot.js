@@ -127,16 +127,22 @@ if (message.body === '!report') {
       
   }
 
-  if (message.body.toLowerCase() === '!cleanrecovery') {
+ if (message.body.toLowerCase() === '!cleanrecovery') {
     try {
-      // Limpiar el contenido del archivo recovery.json
+      // Overwrite the recovery.json file with an empty JSON object
       fs.writeFileSync('recovery.json', '{}');
-      // Enviar mensaje de confirmación
-      client.sendMessage(message.from, 'La información del archivo recovery.json ha sido limpiada correctamente.');
+      console.log('Recovery file cleaned.');
+
+      // Clear the general memory
+      config = {};
+      console.log('General memory cleaned.');
+
+      // Send a message indicating that both the recovery file and general memory have been cleaned successfully
+      client.sendMessage(message.from, 'Recovery file and general memory cleaned.');
     } catch (error) {
-      console.error('Error al limpiar recovery.json:', error);
-      // Enviar mensaje de error en caso de fallo
-      client.sendMessage(message.from, 'Se produjo un error al intentar limpiar la información del archivo recovery.json.');
+      console.error('Error cleaning recovery file and general memory:', error);
+      // Send a message if there is an error cleaning the recovery file and general memory
+      client.sendMessage(message.from, 'Error cleaning recovery file and general memory.');
     }
   }
   

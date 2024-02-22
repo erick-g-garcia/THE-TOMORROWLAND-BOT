@@ -428,9 +428,6 @@ ${message.body}
   }
 });
 
-// Define a Set to keep track of users who have received warning messages
-const warnedUsers = new Set();
-
 client.on('message', async (message) => {
   console.log('Received message:', message);
 
@@ -439,30 +436,26 @@ client.on('message', async (message) => {
 
   console.log(`Author: ${author}, Karma: ${config.karma[author] || 0}`);
 
-  if (config.karma[author] === 30 && !warnedUsers.has(author)) {
+  if (config.karma[author] === 30) {
     const senderContact = await message.getContact();
     const responseMessage = `Hey @${senderContact.id.user}! Your karma level has reached "30" for sending messages with inappropriate content. If your karma reaches level "100" you will be removed from the group. 
 If you think it is a mistake, send a message to an admin to clear your karma level.✌️😎`;
 
     client.sendMessage(message.from, responseMessage, { mentions: [senderContact] });
-
-    // Add the user to the Set of warned users
-    warnedUsers.add(author);
   }
   
-  if (config.karma[author] === 80 && !warnedUsers.has(author)) {
+  if (config.karma[author] === 80) {
     const senderContact = await message.getContact();
     const responseMessage = `Hey @${senderContact.id.user}! 😰😰 its me again, your karma level has now reached "80" for sending messages with inappropriate content. If your karma reaches level "100" you will be removed from the group. ⚠️
 If you think it is a mistake, send a message to an admin to clear your karma level.✌️😎`;
 
+    
     client.sendMessage(message.from, responseMessage, { mentions: [senderContact] });
-
-    // Add the user to the Set of warned users
-    warnedUsers.add(author);
   }
 
+
   if (config.karma[author] >= karmaThreshold || author.startsWith('254') || author.startsWith('92')) {
-    const senderContact = await message.getContact();
+  const senderContact = await message.getContact();
     
     try {
       console.log('Before getting the group');
@@ -473,6 +466,7 @@ If you think it is a mistake, send a message to an admin to clear your karma lev
       await group.removeParticipants([author]);
       console.log('Participant removed');
       
+     
       const modroom = await client.getChatById(config.modRoom); 
       const chat = await message.getChat(); 
       const contact = await message.getContact(); 

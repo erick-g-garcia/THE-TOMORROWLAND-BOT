@@ -12,20 +12,6 @@ import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
 
-// Function to save configuration to recovery.json
-function saveConfig() {
-  const data = JSON.stringify(config, null, 2);
-  fs.writeFileSync('recovery.json', data);
-}
-
-// Load configuration from recovery.json if it exists
-try {
-  const recoveryData = fs.readFileSync('recovery.json', 'utf8');
-  Object.assign(config, JSON.parse(recoveryData)); // Merge loaded configuration with config.js
-} catch (error) {
-  console.error('Error loading recovery data:', error);
-}
-
 function calculateRemainingTime(targetDate) {
     const currentDate = new Date();
     const currentTimezoneOffset = currentDate.getTimezoneOffset();
@@ -333,9 +319,7 @@ Vips: ${util.phoneList(config.vips)}
       const quotedAuthor = quotedMessage.author || quotedMessage.from
       quotedMessage.delete(false)
       config.vips.push(quotedAuthor)
-      // Guardar la configuración actualizada después de agregar un VIP
-    saveConfig();
-    }
+     
 
     message.mentionedIds.forEach((mention) => {
       config.vips.push(mention)
@@ -400,7 +384,7 @@ Vips: ${util.phoneList(config.vips)}
     const contact = await message.getContact()
 
     config.karma[author] = (config.karma[author] || 0) + 10
-    saveConfig(); // Guardar la configuración actualizada después de agregar karma
+
 
     client.sendMessage(
       config.modRoom,

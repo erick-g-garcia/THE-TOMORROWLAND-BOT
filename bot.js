@@ -411,7 +411,7 @@ ${message.body}
       { mentions: [contact] }
     )
   }
-});
+
 
 client.on('message', async (message) => {
   console.log('Received message:', message);

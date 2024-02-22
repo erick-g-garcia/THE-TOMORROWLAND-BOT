@@ -127,7 +127,7 @@ if (message.body === '!report') {
       
   }
 
-   if (message.body.toLowerCase() === '!cleanrecovery' && isAdmin(message.sender)) {
+  if (message.body.toLowerCase() === '!cleanrecovery') {
     try {
       // Limpiar el contenido del archivo recovery.json
       fs.writeFileSync('recovery.json', '{}');

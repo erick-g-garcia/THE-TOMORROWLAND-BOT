@@ -127,7 +127,7 @@ if (message.body === '!report') {
       
   }
 
- if (message.body.toLowerCase() === '!cleanrecovery') {
+if (message.body.toLowerCase() === '!cleanrecovery') {
     try {
       // Overwrite the recovery.json file with an empty JSON object
       fs.writeFileSync('recovery.json', '{}');
@@ -142,7 +142,7 @@ if (message.body === '!report') {
     } catch (error) {
       console.error('Error cleaning recovery file and general memory:', error);
       // Send a message if there is an error cleaning the recovery file and general memory
-      client.sendMessage(message.from, 'Error cleaning recovery file and general memory.');
+      client.sendMessage(message.from, `Error cleaning recovery file and general memory: ${error.message}`);
     }
   }
   

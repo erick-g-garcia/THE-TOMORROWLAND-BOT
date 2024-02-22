@@ -484,7 +484,6 @@ If you think it is a mistake, send a message to an admin to clear your karma lev
       console.error('Error:', error);
     }
   }
-});
 
 
 

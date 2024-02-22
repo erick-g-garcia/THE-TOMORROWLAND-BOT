@@ -486,7 +486,10 @@ If you think it is a mistake, send a message to an admin to clear your karma lev
   }
 });
 
-let config = {};
+// Instead of declaring config again, you can directly assign values to it
+config = {};
+
+// Rest of your code here...
 
 client.on('message', async (message) => {
   console.log('Received message:', message);

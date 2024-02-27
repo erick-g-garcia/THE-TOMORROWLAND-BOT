@@ -48,20 +48,6 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
     
-// Verificar si el mensaje es el comando !report
-  if (message.body.toLowerCase() === '!report') {
-    try {
-      // Obtener la cantidad de miembros en la comunidad de WhatsApp
-      const cantidadMiembros = await obtenerCantidadMiembros();
-
-      // Enviar la cantidad de miembros al canal de Discord
-      const modroom = await client.getChatById(config.modRoom);
-      modroom.sendMessage(`Hay ${cantidadMiembros} miembros en la comunidad de WhatsApp.`);
-    } catch (error) {
-      console.error('Error al obtener la cantidad de miembros:', error);
-      await client.sendMessage(message.from, '¡Ups! Hubo un error al obtener la cantidad de miembros.');
-    
-
 //Pruebas y test
 
   if (message.body.match(/(!test)/gi) && isVip) {

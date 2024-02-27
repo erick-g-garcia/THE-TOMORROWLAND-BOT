@@ -60,39 +60,47 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-  // Verificar si el mensaje es el comando !report
-if (message.body.toLowerCase() === '!report') {
-    // Función para enviar el informe
-    async function sendReport() {
-        try {
-            const community = await getCommunity(); // Obtener información de la comunidad
-            const difference = community.members.filter((member) => {
-                if (community.inAnnouncements) {
-                    return !community.inAnnouncements.includes(member);
-                } else {
-                    // Manejar el caso donde community.inAnnouncements es undefined
-                    return false; // o realizar alguna otra acción apropiada
-                }
-            });
+  // Función para generar y enviar el informe de diferencias
+async function generateDifferenceReport(message) {
+    try {
+        // Obtener información de la comunidad W2
+        const w2Community = await getCommunity('120363131174861227@g.us');
 
-            let report = `Author: ${community.author}, Karma: ${community.karma}\n`;
-            community.communities.forEach((c) => {
-                report += `${c}\n`;
-            });
+        // Obtener información de todos los grupos W2
+        const allW2Groups = await getAllW2Groups();
 
-            difference.forEach((diff) => {
-                report += `${diff}\n`;
-            });
+        // Comparar miembros de cada grupo W2 con la comunidad W2
+        let differences = {};
+        allW2Groups.forEach(async (group) => {
+            if (group.id !== '120363131174861227@g.us') { // Evitar comparar con la comunidad W2 misma
+                const difference = group.members.filter((member) => !w2Community.members.includes(member));
+                differences[group.name] = difference;
+            }
+        });
 
-            console.log(report);
-        } catch (error) {
-            console.error('Error al enviar el informe:', error);
-        }
+        // Enviar el informe al modroom
+        let report = 'Diferencias encontradas en los grupos W2:\n';
+        Object.keys(differences).forEach((groupName) => {
+            report += `${groupName}:\n`;
+            differences[groupName].forEach((member) => {
+                report += `${member}\n`;
+            });
+            report += '\n';
+        });
+
+        await client.sendMessage('modroom', report);
+    } catch (error) {
+        console.error('Error al generar y enviar el informe de diferencias:', error);
+        await client.sendMessage(message.from, '¡Ups! Hubo un error al generar y enviar el informe de diferencias.');
     }
-
-    // Llamar a la función para enviar el informe
-    await sendReport();
 }
+
+// Verificar si el mensaje es el comando !report
+if (message.body.toLowerCase() === '!report') {
+    // Llamar a la función para generar y enviar el informe de diferencias
+    await generateDifferenceReport(message);
+}
+
 
 
 //Pruebas y test

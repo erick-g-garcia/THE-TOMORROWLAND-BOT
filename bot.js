@@ -60,59 +60,46 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
- if (message.body === '!report') {
-    // Función para enviar el informe al modroom
+  if (message.body === '!report') {
     async function sendReport() {
-      // Aquí colocarías el código para recorrer los chats, identificar las comunidades y los canales de anuncios, y mostrar las diferencias de miembros.
       let map = {};
 
       const chats = await client.getChats();
 
-      // Loop sobre todos los chats para encontrar comunidades
       for (const chat of chats) {
-        // ¿Es esta una comunidad?
-        if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
+        if (chat.type !== 'announce' && chat.groupMetadata && chat.groupMetadata.isParentGroup) {
           console.log('Community: ', chat.name, chat.id._serialized);
           let groupId = chat.id._serialized;
 
-          // Declara el objeto y crea una nueva lista de miembros para esta comunidad
           map[groupId] = {
             name: chat.name,
             members: [],
           };
 
-          // Obtiene cada participante y agrega su ID al mapa de esta comunidad
           for (const participant of chat.participants) {
             map[groupId]['members'].push(participant.id._serialized);
           }
         }
       }
 
-      // Ahora que se ha creado un mapa de todas las comunidades, recorre nuevamente para encontrar los anuncios
       for (const chat of chats) {
-        // ¿Es este un canal de anuncios?
-        if (chat.groupMetadata && chat.groupMetadata.announce) {
+        if (chat.type === 'announce') {
           console.log('Announcement: ', chat.name, chat.id._serialized);
           let groupId = chat.id._serialized;
           let parentId = chat.groupMetadata.parentGroup._serialized;
 
-          // Si el mapa para este ID de comunidad no existe, significa que el canal de anuncios se refiere a un padre que no se enumeró en el bucle anterior
           if (!map[parentId]) {
             continue;
           }
 
-          // Crea una lista para los participantes en el canal de anuncios
           map[parentId]['inAnnouncements'] = [];
 
-          // Obtiene cada participante del canal de anuncios
-          // y agrega su ID a la lista dentro de este mapa de comunidad
           for (const participant of chat.participants) {
             map[parentId]['inAnnouncements'].push(participant.id._serialized);
           }
         }
       }
 
-      // Ahora puedes recorrer todas las comunidades y comparar las listas.
       for (const communityId in map) {
         const community = map[communityId];
         console.log(community.name);
@@ -120,7 +107,6 @@ client.on('message', async (message) => {
         const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
         console.log('Difference: ', difference);
 
-        // Envía el informe al modroom si hay diferencias de miembros
         if (difference.length > 0) {
           const message = `Diferencias en la comunidad ${community.name}: ${difference.join(', ')}`;
           await client.sendMessage(config.modRoom, message);
@@ -128,7 +114,6 @@ client.on('message', async (message) => {
       }
     }
 
-    // Llama a la función para enviar el informe
     sendReport();
   }
 

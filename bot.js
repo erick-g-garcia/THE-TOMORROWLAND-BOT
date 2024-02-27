@@ -60,62 +60,39 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-  if (message.body === '!report') {
+  // Verificar si el mensaje es el comando !report
+if (message.body.toLowerCase() === '!report') {
+    // Función para enviar el informe
     async function sendReport() {
-      let map = {};
+        try {
+            const community = await getCommunity(); // Obtener información de la comunidad
+            const difference = community.members.filter((member) => {
+                if (community.inAnnouncements) {
+                    return !community.inAnnouncements.includes(member);
+                } else {
+                    // Manejar el caso donde community.inAnnouncements es undefined
+                    return false; // o realizar alguna otra acción apropiada
+                }
+            });
 
-      const chats = await client.getChats();
+            let report = `Author: ${community.author}, Karma: ${community.karma}\n`;
+            community.communities.forEach((c) => {
+                report += `${c}\n`;
+            });
 
-      for (const chat of chats) {
-        if (chat.type !== 'announce' && chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-          console.log('Community: ', chat.name, chat.id._serialized);
-          let groupId = chat.id._serialized;
+            difference.forEach((diff) => {
+                report += `${diff}\n`;
+            });
 
-          map[groupId] = {
-            name: chat.name,
-            members: [],
-          };
-
-          for (const participant of chat.participants) {
-            map[groupId]['members'].push(participant.id._serialized);
-          }
+            console.log(report);
+        } catch (error) {
+            console.error('Error al enviar el informe:', error);
         }
-      }
-
-      for (const chat of chats) {
-        if (chat.type === 'announce') {
-          console.log('Announcement: ', chat.name, chat.id._serialized);
-          let groupId = chat.id._serialized;
-          let parentId = chat.groupMetadata.parentGroup._serialized;
-
-          if (!map[parentId]) {
-            continue;
-          }
-
-          map[parentId]['inAnnouncements'] = [];
-
-          for (const participant of chat.participants) {
-            map[parentId]['inAnnouncements'].push(participant.id._serialized);
-          }
-        }
-      }
-
-      for (const communityId in map) {
-        const community = map[communityId];
-        console.log(community.name);
-
-        const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
-        console.log('Difference: ', difference);
-
-        if (difference.length > 0) {
-          const message = `Diferencias en la comunidad ${community.name}: ${difference.join(', ')}`;
-          await client.sendMessage(config.modRoom, message);
-        }
-      }
     }
 
-    sendReport();
-  }
+    // Llamar a la función para enviar el informe
+    await sendReport();
+}
 
 
 //Pruebas y test

@@ -126,15 +126,22 @@ client.on('message', async (message) => {
   }
 
   // Verificar si el mensaje es el comando !group
+// Verificar si el mensaje es el comando !group
 if (message.body.toLowerCase() === '!group') {
   // Función para obtener la lista de grupos y sus IDs
   async function getGroupList() {
     try {
-      const groups = await client.getChats();
+      const chats = await client.getChats();
       let groupList = 'Lista de grupos y sus IDs:\n\n';
-      groups.forEach((group, index) => {
-        groupList += `${index + 1}. ${group.name || 'Grupo sin nombre'} - ID: ${group.id._serialized}\n`;
+      let groupCount = 0;
+      
+      chats.forEach((chat, index) => {
+        if (chat.isGroup) {
+          groupCount++;
+          groupList += `${groupCount}. ${chat.name || 'Grupo sin nombre'} - ID: ${chat.id._serialized}\n`;
+        }
       });
+      
       await client.sendMessage(message.from, groupList);
     } catch (error) {
       console.error('Error al obtener la lista de grupos:', error);
@@ -145,6 +152,7 @@ if (message.body.toLowerCase() === '!group') {
   // Llamar a la función para obtener la lista de grupos y sus IDs
   await getGroupList();
 }
+
 
 
      //Countdown command

@@ -61,7 +61,7 @@ client.on('message', async (message) => {
       console.error('Error al obtener la cantidad de miembros:', error);
       await client.sendMessage(message.from, '¡Ups! Hubo un error al obtener la cantidad de miembros.');
     }
-  }
+  
 //Pruebas y test
 
   if (message.body.match(/(!test)/gi) && isVip) {

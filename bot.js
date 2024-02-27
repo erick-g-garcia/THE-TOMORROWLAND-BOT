@@ -41,6 +41,71 @@ client.on('ready', async () => {
   // Evento que se ejecuta cuando el cliente está listo
   console.log('Chop chop. Client is ready!');
 
+     // This is an object, which will hold the unique chat ID as an index
+  // https://learnersbucket.com/examples/array/what-is-the-difference-between-an-array-and-an-object-in-javascript/
+  let map = {};
+ 
+  const chats = await client.getChats();
+ 
+  // Loop over all chats to find communities
+  for (const chat of chats) {
+    // Is this a community?
+    if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
+      console.log('Community: ', chat.name, chat.id._serialized);
+      let groupId = chat.id._serialized;
+ 
+      // Declare the object and create new list of members for this community
+      map[groupId] = {
+        name: chat.name,
+        members: [],
+      };
+ 
+      // Get every participant and add its ID to the map of this community
+      for (const participant of chat.participants) {
+        map[groupId]['members'].push(participant.id._serialized);
+      }
+    }
+  }
+ 
+  // Now that a map of all communities has been made, loop again to find announcements
+  for (const chat of chats) {
+    // Is this an announcement channel?
+    if (chat.groupMetadata && chat.groupMetadata.announce) {
+      console.log('Announcement: ', chat.name, chat.id._serialized);
+      let groupId = chat.id._serialized;
+      let parentId = chat.groupMetadata.parentGroup._serialized;
+ 
+      // If the map for this community ID does not exist, it means that the
+      // annoucement chat is referring a parent that was not listed in the previous loop
+      if (!map[parentId]) {
+        continue;
+      }
+ 
+      // Create a list for participants in the announcement channel
+      map[parentId]['inAnnouncements'] = [];
+ 
+      // Get every participant of the announcements channel
+      // and add its ID to list inside this community map
+      for (const participant of chat.participants) {
+        map[parentId]['inAnnouncements'].push(participant.id._serialized);
+      }
+    }
+  }
+ 
+  // Now we can loop over all communities and compare the lists.
+  // https://www.geeksforgeeks.org/how-to-get-the-difference-between-two-arrays-in-javascript/
+  // https://codereview.stackexchange.com/questions/223821/find-the-one-element-in-an-array-that-is-different-from-the-others
+ 
+  for (const communityId in map) {
+    const community = map[communityId];
+    console.log(community.name);
+ 
+    const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
+    console.log('Difference: ', difference);
+  }
+ 
+});
+
   // Aquí se coloca el bloque de código para obtener la lista de contactos
   let names = {};
   const contacts = await client.getContacts();
@@ -59,82 +124,6 @@ client.on('message', async (message) => {
 
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
-
-// Función para obtener la información de la comunidad con el ID especificado
-async function getCommunity(communityId) {
-    try {
-        // Aquí deberías implementar la lógica para obtener la información de la comunidad
-        // Puedes usar la API de WhatsApp para obtener los miembros de la comunidad
-        // y cualquier otra información que necesites
-        // Por ahora, simplemente retornaré un objeto de ejemplo con algunos miembros
-        return {
-            id: communityId,
-            members: ['member1', 'member2', 'member3'] // Ejemplo de miembros de la comunidad
-        };
-    } catch (error) {
-        console.error('Error al obtener la información de la comunidad:', error);
-        throw error;
-    }
-}
-
-// Función para obtener la información de todos los grupos W2
-async function getAllW2Groups() {
-    try {
-        // Aquí deberías implementar la lógica para obtener la información de todos los grupos W2
-        // Puedes usar la API de WhatsApp para obtener los grupos y filtrar los que sean de tipo W2
-        // y cualquier otra información que necesites
-        // Por ahora, simplemente retornaré un array de objetos de ejemplo con algunos grupos
-        return [
-            { name: 'Group1', id: 'groupId1', members: ['member1', 'member2', 'member3'] },
-            { name: 'Group2', id: 'groupId2', members: ['member4', 'member5', 'member6'] }
-        ];
-    } catch (error) {
-        console.error('Error al obtener la información de todos los grupos W2:', error);
-        throw error;
-    }
-}
-
-// Función para generar y enviar el informe de diferencias
-async function generateDifferenceReport(message) {
-    try {
-        // Obtener información de la comunidad W2
-        const w2Community = await getCommunity('120363131174861227@g.us');
-
-        // Obtener información de todos los grupos W2
-        const allW2Groups = await getAllW2Groups();
-
-        // Comparar miembros de cada grupo W2 con la comunidad W2
-        let differences = {};
-        allW2Groups.forEach(async (group) => {
-            if (group.id !== '120363131174861227@g.us') { // Evitar comparar con la comunidad W2 misma
-                const difference = group.members.filter((member) => !w2Community.members.includes(member));
-                differences[group.name] = difference;
-            }
-        });
-
-        // Enviar el informe al modroom
-        let report = 'Diferencias encontradas en los grupos W2:\n';
-        Object.keys(differences).forEach((groupName) => {
-            report += `${groupName}:\n`;
-            differences[groupName].forEach((member) => {
-                report += `${member}\n`;
-            });
-            report += '\n';
-        });
-
-        await client.sendMessage('modroom', report);
-    } catch (error) {
-        console.error('Error al generar y enviar el informe de diferencias:', error);
-        await client.sendMessage(message.from, '¡Ups! Hubo un error al generar y enviar el informe de diferencias.');
-    }
-}
-
-// Verificar si el mensaje es el comando !report
-if (message.body.toLowerCase() === '!report') {
-    // Llamar a la función para generar y enviar el informe de diferencias
-    await generateDifferenceReport(message);
-}
-
 
 
 //Pruebas y test

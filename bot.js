@@ -47,8 +47,8 @@ client.on('message', async (message) => {
 
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
-
- // Verificar si el mensaje es el comando !report
+    
+// Verificar si el mensaje es el comando !report
   if (message.body.toLowerCase() === '!report') {
     try {
       // Obtener la cantidad de miembros en la comunidad de WhatsApp
@@ -61,7 +61,9 @@ client.on('message', async (message) => {
       console.error('Error al obtener la cantidad de miembros:', error);
       await client.sendMessage(message.from, '¡Ups! Hubo un error al obtener la cantidad de miembros.');
     }
-  
+  }
+});
+
 //Pruebas y test
 
   if (message.body.match(/(!test)/gi) && isVip) {

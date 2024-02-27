@@ -62,7 +62,7 @@ client.on('message', async (message) => {
       await client.sendMessage(message.from, '¡Ups! Hubo un error al obtener la cantidad de miembros.');
     }
   }
-});
+
 
 //Pruebas y test
 

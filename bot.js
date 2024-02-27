@@ -55,8 +55,9 @@ client.on('ready', async () => {
 
   // Este es el bloque de código que maneja las comunidades y los anuncios, 
   // lo dejo como está porque ya ha sido corregido.
-  let map = {};
+let map = {};
   const chats = await client.getChats();
+
   for (const chat of chats) {
     if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
       console.log('Community: ', chat.name, chat.id._serialized);
@@ -70,6 +71,7 @@ client.on('ready', async () => {
       }
     }
   }
+
   for (const chat of chats) {
     if (chat.groupMetadata && chat.groupMetadata.announce) {
       console.log('Announcement: ', chat.name, chat.id._serialized);
@@ -84,6 +86,7 @@ client.on('ready', async () => {
       }
     }
   }
+
   for (const communityId in map) {
     const community = map[communityId];
     console.log(community.name);

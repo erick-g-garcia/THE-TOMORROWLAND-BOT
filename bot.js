@@ -41,59 +41,15 @@ client.on('ready', async () => {
   // Evento que se ejecuta cuando el cliente está listo
   console.log('Chop chop. Client is ready!');
 
- // Bloque de código para obtener la lista de contactos
-  let names = {};
-  const contacts = await client.getContacts();
-  for (const contact of contacts) {
-    if (!contact.name && !contact.pushname) {
-      continue;
-    }
-    names[contact.id._serialized] = contact.name || contact.pushname;
-  }
-  console.log('Contacts:', names);
+    
+// Obtener la cantidad de miembros en la comunidad de WhatsApp
+  const cantidadMiembros = await obtenerCantidadMiembros();
 
-  // Bloque de código que maneja las comunidades y los anuncios
-  let map = {};
-  const chats = await client.getChats();
-  console.log('Total de chats obtenidos:', chats.length);
-
-  for (const chat of chats) {
-    if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
-      console.log('Community: ', chat.name, chat.id._serialized);
-      let groupId = chat.id._serialized;
-      map[groupId] = {
-        name: chat.name,
-        members: [],
-      };
-      for (const participant of chat.participants) {
-        map[groupId]['members'].push(participant.id._serialized);
-      }
-    }
-  }
-
-  for (const chat of chats) {
-    if (chat.groupMetadata && chat.groupMetadata.announce) {
-      console.log('Announcement: ', chat.name, chat.id._serialized);
-      let groupId = chat.id._serialized;
-      let parentId = chat.groupMetadata.parentGroup._serialized;
-      if (!map[parentId]) {
-        console.log('Parent group not found for announcement:', parentId);
-        continue;
-      }
-      map[parentId]['inAnnouncements'] = [];
-      for (const participant of chat.participants) {
-        map[parentId]['inAnnouncements'].push(participant.id._serialized);
-      }
-    }
-  }
-
-  for (const communityId in map) {
-    const community = map[communityId];
-    console.log('Community:', community.name);
-    const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
-    console.log('Difference: ', difference);
-  }
+  // Enviar la cantidad de miembros al canal de Discord
+  const modroom = await client.getChatById(config.modRoom);
+  modroom.sendMessage(`Hay ${cantidadMiembros} miembros en la comunidad de WhatsApp.`);
 });
+
 
 client.on('message', async (message) => {
   console.log('Received message:', message);

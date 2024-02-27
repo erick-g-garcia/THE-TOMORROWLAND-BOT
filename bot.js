@@ -47,61 +47,20 @@ client.on('message', async (message) => {
   const author = message.author || message.from;
   const isVip = config.vips.includes(author);
 
-// Verificar si el mensaje es el comando !report
-if (message.body === '!report') {
-  // Función para enviar el informe al modroom
-  async function sendReport() {
-    let announcementGroupId = '120363148340528283@g.us'; // ID del grupo de anuncios
+  // Verificar si el mensaje es el comando !report
+    if (message.body.toLowerCase() === '!report') {
+      try {
+        // Obtener la cantidad de miembros en la comunidad de WhatsApp
+        const cantidadMiembros = await obtenerCantidadMiembros();
 
-    try {
-      const chats = await client.getChats();
-
-      // Encontrar el grupo de anuncios
-      let announcementGroup = chats.find(c => c.id._serialized === announcementGroupId);
-      const announcementMembers = announcementGroup ? announcementGroup.participants.map(participant => participant.id._serialized) : [];
-
-      // Construir el mensaje con la lista de miembros que no están en el grupo de anuncios
-      let message = 'Lista de miembros que no están en el grupo de anuncios:\n\n';
-
-      // Recorrer todos los chats (grupos) de la comunidad
-      for (const chat of chats) {
-        // Solo considerar grupos de WhatsApp
-        if (chat.isGroup) {
-          let groupId = chat.id._serialized;
-          let groupName = chat.name || 'Grupo sin nombre';
-
-          // Obtener los miembros del grupo
-          const groupMembers = chat.participants.map(participant => participant.id._serialized);
-
-          // Encontrar los miembros que no están en el grupo de anuncios
-          const membersNotInAnnouncementGroup = groupMembers.filter(member => !announcementMembers.includes(member));
-
-          // Si hay miembros que no están en el grupo de anuncios, agregarlos al mensaje
-          if (membersNotInAnnouncementGroup.length > 0) {
-            message += `${groupName} - ID: ${groupId}\n`;
-            for (const member of membersNotInAnnouncementGroup) {
-              message += `${member}\n`;
-            }
-            message += '\n';
-          }
-        }
+        // Enviar la cantidad de miembros al canal de Discord
+        const modroom = await client.getChatById(config.modRoom);
+        modroom.sendMessage(`Hay ${cantidadMiembros} miembros en la comunidad de WhatsApp.`);
+      } catch (error) {
+        console.error('Error al obtener la cantidad de miembros:', error);
+        await client.sendMessage(message.from, '¡Ups! Hubo un error al obtener la cantidad de miembros.');
       }
-
-      // Enviar el informe al modroom si hay miembros que no están en el grupo de anuncios
-      if (message !== 'Lista de miembros que no están en el grupo de anuncios:\n\n') {
-        await client.sendMessage((config.modRoom), message);
-      } else {
-        await client.sendMessage((config.modRoom), '¡Todos los miembros están en el grupo de anuncios!');
-      }
-    } catch (error) {
-      console.error('Error al obtener la lista de miembros:', error);
-      await client.sendMessage((config.modRoom), '¡Ups! Hubo un error al obtener la lista de miembros.');
-    }
-  }
-
-  // Llamar a la función para enviar el informe
-  await sendReport();
-}
+    }       
     
 //Pruebas y test
 

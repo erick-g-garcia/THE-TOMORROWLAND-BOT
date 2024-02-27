@@ -41,7 +41,7 @@ client.on('ready', async () => {
   // Evento que se ejecuta cuando el cliente está listo
   console.log('Chop chop. Client is ready!');
 
-    // Aquí se coloca el bloque de código para obtener la lista de contactos
+ // Bloque de código para obtener la lista de contactos
   let names = {};
   const contacts = await client.getContacts();
   for (const contact of contacts) {
@@ -50,13 +50,12 @@ client.on('ready', async () => {
     }
     names[contact.id._serialized] = contact.name || contact.pushname;
   }
-  // No es necesario imprimir los nombres en la consola
-  // console.log(names);
+  console.log('Contacts:', names);
 
-  // Este es el bloque de código que maneja las comunidades y los anuncios, 
-  // lo dejo como está porque ya ha sido corregido.
-let map = {};
+  // Bloque de código que maneja las comunidades y los anuncios
+  let map = {};
   const chats = await client.getChats();
+  console.log('Total de chats obtenidos:', chats.length);
 
   for (const chat of chats) {
     if (chat.groupMetadata && chat.groupMetadata.isParentGroup) {
@@ -78,6 +77,7 @@ let map = {};
       let groupId = chat.id._serialized;
       let parentId = chat.groupMetadata.parentGroup._serialized;
       if (!map[parentId]) {
+        console.log('Parent group not found for announcement:', parentId);
         continue;
       }
       map[parentId]['inAnnouncements'] = [];
@@ -89,7 +89,7 @@ let map = {};
 
   for (const communityId in map) {
     const community = map[communityId];
-    console.log(community.name);
+    console.log('Community:', community.name);
     const difference = community.members.filter((member) => !community.inAnnouncements.includes(member));
     console.log('Difference: ', difference);
   }

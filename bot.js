@@ -11,7 +11,16 @@ import { spawn } from 'child_process';
 import OpenAI from "openai";
 const { Client, LocalAuth, Buttons, List, MessageMedia } = pkg;
 
-
+// Función para obtener la cantidad de miembros en la comunidad de WhatsApp
+async function obtenerCantidadMiembros() {
+  try {
+    const chats = await client.getChats();
+    const groupChats = chats.filter(chat => chat.isGroup);
+    return groupChats.length;
+  } catch (error) {
+    throw new Error('Error al obtener la cantidad de miembros: ' + error.message);
+  }
+}
 
 function calculateRemainingTime(targetDate) {
     const currentDate = new Date();

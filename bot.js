@@ -235,20 +235,26 @@ ${util.karmaList(config.karma)}`
     return
   }
 
- if (message.body.startsWith('!status') && isVip) {
-    client.sendMessage(
-      config.modRoom,
-      `Yo! I'm up and running.
+if (message.body.startsWith('!status') && isVip) {
+  let blacklistNames = Object.keys(config.blacklist).map(number => names[number] || number).join(', ');
+  let mutelistNames = Object.keys(config.mutelist).map(number => names[number] || number).join(', ');
+  let trustlistNames = Object.keys(config.trustlist).map(number => names[number] || number).join(', ');
+  let vipsNames = Object.keys(config.vips).map(number => names[number] || number).join(', ');
 
-Blacklisted: ${util.phoneList(config.blacklist)}
-Mute: ${util.phoneList(config.mutelist)}
-Trusted: ${util.phoneList(config.trustlist)}
-Vips: ${util.phoneList(config.vips)}
+  client.sendMessage(
+    config.modRoom,
+    `Yo! I'm up and running.
+
+Blacklisted: ${blacklistNames}
+Mute: ${mutelistNames}
+Trusted: ${trustlistNames}
+Vips: ${vipsNames}
 `
-    )
+  )
 
-    return
-  }
+  return
+}
+
 
 
   if (message.body.startsWith('!flag') && isVip) {
@@ -310,8 +316,7 @@ Vips: ${util.phoneList(config.vips)}
       const quotedAuthor = quotedMessage.author || quotedMessage.from
       quotedMessage.delete(false)
       config.vips.push(quotedAuthor)
-      // Guardar la configuración actualizada después de agregar un VIP
-    saveConfig();
+     
     }
 
     message.mentionedIds.forEach((mention) => {
@@ -377,7 +382,6 @@ Vips: ${util.phoneList(config.vips)}
     const contact = await message.getContact()
 
     config.karma[author] = (config.karma[author] || 0) + 10
-    saveConfig(); // Guardar la configuración actualizada después de agregar karma
 
     client.sendMessage(
       config.modRoom,

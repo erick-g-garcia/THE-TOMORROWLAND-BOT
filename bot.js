@@ -38,7 +38,19 @@ client.on('qr', (qr) => {
 });
 
 client.on('ready', async () => {
+  // Evento que se ejecuta cuando el cliente está listo
   console.log('Chop chop. Client is ready!');
+
+  // Aquí se coloca el bloque de código para obtener la lista de contactos
+  let names = {};
+  const contacts = await client.getContacts();
+  for (const contact of contacts) {
+    if (!contact.name && !contact.pushname) {
+      continue;
+    }
+    names[contact.id._serialized] = contact.name || contact.pushname;
+  }
+  console.log(names);
 });
 
 client.on('message', async (message) => {

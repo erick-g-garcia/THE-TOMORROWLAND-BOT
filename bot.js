@@ -50,7 +50,8 @@ client.on('ready', async () => {
     }
     names[contact.id._serialized] = contact.name || contact.pushname;
   }
-  console.log(names);
+  // No es necesario imprimir los nombres en la consola
+  // console.log(names);
 });
 
 client.on('message', async (message) => {
